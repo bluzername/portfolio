@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Evyatar Bluzer",
   title: "Evyatar Bluzer - Architect of Breakthrough Platforms",
   description:
-    "Architect of breakthrough platforms (VPS, Synthetic Data, Spatial Compute) | Building, Consulting & Investing | Riding the AI wave | Ex-Meta/Microsoft/Magic-Leap",
+    "Architect of breakthrough platforms (Spatial AI, Synthetic Data, Visual Positioning) | Building, Consulting, Teaching & Investing | Riding the AI wave | Ex-Meta/Microsoft/Magic-Leap",
   url: "https://portfolio.bluzername.live",
   ogImage: "https://portfolio.bluzername.live/og.png",
   links: {
@@ -18,17 +18,22 @@ export const siteConfig = {
   },
   keywords: [
     "Evyatar Bluzer",
-    "Software Architect",
-    "VPS",
+    "System Architecture",
+    "Spatial AI",
     "Synthetic Data",
-    "Spatial Compute",
+    "Visual Positioning",
+    "Computer Vision",
     "AI",
     "Meta",
     "Microsoft",
     "Magic Leap",
-    "Full Stack Developer",
+    "Mixed Reality",
+    "XR",
+    "AR/VR",
+    "Eye Tracking",
+    "Talpiot",
     "Consulting",
-    "Tech Investor",
+    "Program Management",
   ],
 };
 

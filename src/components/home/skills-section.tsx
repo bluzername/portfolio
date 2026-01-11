@@ -4,31 +4,33 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
 const skills = {
-  "Platforms & Infrastructure": [
-    "VPS Architecture",
-    "Cloud Infrastructure",
-    "Distributed Systems",
-    "System Design",
+  "AI & Computer Vision": [
+    "Visual Positioning Systems",
+    "3D Mapping & Localization",
+    "Synthetic Data Generation",
+    "Perception Systems",
+    "Eye Tracking",
   ],
-  "AI & Data": [
-    "Synthetic Data",
-    "Machine Learning",
-    "Computer Vision",
-    "AI Integration",
+  "Spatial Computing & XR": [
+    "Mixed Reality Hardware",
+    "AR/VR Architecture",
+    "6DoF Tracking",
+    "Embedded Systems",
+    "Sensor Fusion",
   ],
-  "Spatial Computing": [
-    "AR/VR Development",
-    "3D Graphics",
-    "Spatial UI/UX",
-    "Real-time Systems",
+  "System Architecture": [
+    "Program Management",
+    "Hardware-Software Co-design",
+    "Mass Production",
+    "Multi-org Coordination",
+    "8-Figure Budgets",
   ],
-  "Languages & Tools": [
-    "TypeScript",
-    "Python",
-    "React",
-    "Next.js",
-    "Node.js",
-    "Rust",
+  "Domains & Technologies": [
+    "Wireless & DSP",
+    "Cyber Security",
+    "Intelligence Systems",
+    "Real-time Embedded",
+    "Computer Vision SDKs",
   ],
 };
 
@@ -60,7 +62,7 @@ export function SkillsSection() {
         >
           <h2 className="text-3xl font-bold tracking-tight mb-4">Areas of Expertise</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Building at the intersection of infrastructure, AI, and spatial computing
+            Two decades building at the intersection of AI, spatial computing, and national-scale systems
           </p>
         </motion.div>
 

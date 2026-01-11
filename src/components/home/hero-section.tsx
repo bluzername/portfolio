@@ -66,8 +66,9 @@ export function HeroSection() {
             transition={{ delay: 0.5 }}
             className="max-w-2xl text-muted-foreground mb-8 leading-relaxed"
           >
-            Building breakthrough platforms in VPS, Synthetic Data, and Spatial Compute.
-            Consulting, investing, and riding the AI wave. Previously at Meta, Microsoft, and Magic Leap.
+            I architect and ship frontier platforms in AI, spatial compute, and cyber &mdash; from
+            national-scale intelligence systems to AR/VR devices and AI-native products.
+            Two decades across the stack at Meta, Magic Leap, Microsoft, and Israel&apos;s Prime Minister&apos;s Office.
           </motion.p>
 
           {/* CTA Buttons */}
