@@ -74,10 +74,22 @@ const education = [
 ];
 
 const patents = [
-  "Computing System and Method for Identifying Files Transmitted to an External Network",
-  "Eye-Imaging Apparatus Using Diffractive Optical Elements",
-  "Method and System for Eye Tracking Using Speckle Patterns",
-  "Methods and Systems for 3D Map Sharing Between Heterogeneous Computing Systems",
+  {
+    title: "Computing System and Method for Identifying Files Transmitted to an External Network",
+    url: "https://patents.justia.com/patent/10038738",
+  },
+  {
+    title: "Eye-Imaging Apparatus Using Diffractive Optical Elements",
+    url: "https://patents.justia.com/patent/11237631",
+  },
+  {
+    title: "Method and System for Eye Tracking Using Speckle Patterns",
+    url: "https://patents.justia.com/patent/10948981",
+  },
+  {
+    title: "Methods and Systems for 3D Map Sharing Between Heterogeneous Computing Systems",
+    url: "https://patents.justia.com/inventor/evyatar-bluzer",
+  },
 ];
 
 export default function AboutPage() {
@@ -196,9 +208,16 @@ export default function AboutPage() {
           <h3 className="font-semibold mb-3">Patents</h3>
           <div className="flex flex-wrap gap-2">
             {patents.map((patent, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {patent}
-              </Badge>
+              <Link
+                key={index}
+                href={patent.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors">
+                  {patent.title}
+                </Badge>
+              </Link>
             ))}
           </div>
         </section>
