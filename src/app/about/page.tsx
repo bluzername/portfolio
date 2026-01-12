@@ -88,7 +88,7 @@ const patents = [
   },
   {
     title: "Methods and Systems for 3D Map Sharing Between Heterogeneous Computing Systems",
-    url: "https://patents.justia.com/inventor/evyatar-bluzer",
+    url: "https://patents.justia.com/patent/12066545",
   },
 ];
 
