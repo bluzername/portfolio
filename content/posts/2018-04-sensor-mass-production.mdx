@@ -1,0 +1,98 @@
+---
+title: "From Prototype to Mass Production: Sensor Manufacturing"
+date: "2018-04-23"
+excerpt: "The journey from a working sensor prototype to thousands of units rolling off a production line - yield, calibration, and quality at scale."
+tags: ["Manufacturing", "Sensors", "Hardware", "Scale", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We have working sensors in the lab. Now we need to make 100,000 of them. The challenges are completely different.
+
+## Prototype vs Production Mindset
+
+In prototyping:
+- Hand-tuned calibration
+- Best-in-class components
+- Unlimited debug time
+- Sample size: 1
+
+In production:
+- Automated calibration (seconds per unit)
+- Cost-optimized components
+- Diagnosis in seconds
+- Every unit must work
+
+## Yield: The Defining Metric
+
+Yield = (Good units) / (Total units manufactured)
+
+At $50 component cost and 80% yield:
+- Effective cost = $50 / 0.8 = $62.50 per good unit
+- 20% scrap cost adds up to millions at scale
+
+At 95% yield:
+- Effective cost = $50 / 0.95 = $52.63 per good unit
+
+That 15% yield improvement might be worth more than any other optimization.
+
+## Sources of Yield Loss
+
+**Component variation**: Every resistor, capacitor, optical element has tolerance
+- Resistors: ±1% is common
+- Optical elements: ±5% on transmission is good
+- Combined: distributions multiply
+
+**Assembly variation**: Placement accuracy, bond quality, contamination
+- Pick-and-place: ±50μm typical
+- Die attach: thermal interface quality varies
+- Cleanliness: particles in optical path
+
+**Process variation**: Temperature, humidity, equipment drift
+- Reflow profiles vary oven-to-oven
+- Adhesive cure varies with batch
+
+## Design for Manufacturing (DFM)
+
+Choices we made for manufacturability:
+
+**Wider tolerances where possible**: If algorithm can handle ±10% depth error, don't specify ±5% sensor calibration.
+
+**Testability**: Every subsystem must be independently testable. Can't debug what you can't probe.
+
+**Redundancy**: If one sensor fails calibration, can we reroute to a spare? Built-in flexibility.
+
+**Binary pass/fail**: Clear criteria, no subjective decisions on the line.
+
+## Calibration at Scale
+
+Our lab calibration takes 30 minutes per unit. Production target: 30 seconds.
+
+How:
+- **Parallel calibration**: Calibrate multiple parameters simultaneously
+- **Known-good reference**: Calibrate against golden units, not absolute standards
+- **Statistical shortcuts**: Some parameters can be inferred from others
+- **Post-assembly trimming**: Adjust in firmware what hardware can't deliver
+
+## Quality Escapes
+
+What happens when a bad unit reaches a customer?
+
+- Field failure → customer frustration → returns → reputation damage
+- Cost of one field failure = 100x cost of factory catch
+
+Invest heavily in outgoing quality control (OQC):
+- 100% functional test
+- Sample environmental stress screening
+- Accelerated life testing on samples
+
+## Learning from the Line
+
+Production data is gold:
+- Calibration parameters → track component suppliers
+- Test failures → feed back to design
+- Customer returns → find escapes in testing
+
+We've built dashboards tracking key metrics in real-time. Manufacturing problems visible within hours, not weeks.
+
+Production ramp is Q3. We'll learn a lot more soon.

@@ -1,0 +1,109 @@
+---
+title: "Production ML Systems: Beyond Model Training"
+date: "2021-10-18"
+excerpt: "What it takes to run ML in production at scale - monitoring, versioning, deployment, and all the things that aren't training."
+tags: ["MLOps", "Production", "Infrastructure", "Deep Learning", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Training a good model is maybe 20% of production ML. The other 80% is everything else.
+
+## The Full ML System
+
+```
+Data Pipeline → Feature Engineering → Training → Evaluation →
+Deployment → Monitoring → Feedback → Data Pipeline
+```
+
+Most ML research focuses on training. Production systems need everything else to work too.
+
+## Data Pipeline
+
+In production:
+- Data arrives continuously (not static datasets)
+- Data quality varies (upstream bugs, schema changes)
+- Data volumes are large (can't fit in memory)
+- Freshness matters (stale training data = stale model)
+
+Our system:
+- Streaming data ingestion
+- Automated quality checks (distribution monitoring)
+- Incremental dataset creation
+- Lineage tracking (which data trained which model)
+
+## Feature Engineering
+
+Features for VPS:
+- Image features (learned descriptors)
+- Geometric features (camera poses)
+- Context features (time, weather, device type)
+
+Production concerns:
+- Feature computation must be identical in training and serving
+- Feature stores for consistency
+- Feature versioning (V1 features vs V2 features)
+
+Training/serving skew is a top cause of production issues.
+
+## Training Infrastructure
+
+At Meta scale:
+- Distributed training across hundreds of GPUs
+- Hyperparameter search across thousands of configs
+- Automatic retraining on new data
+- Experiment tracking and comparison
+
+We retrain VPS models weekly with latest data.
+
+## Evaluation
+
+Research evaluation: Benchmark accuracy.
+Production evaluation: Will this model improve the product?
+
+Additional metrics:
+- Latency (is it fast enough?)
+- Memory (does it fit?)
+- Fairness (does it work equally across regions?)
+- Robustness (does it handle edge cases?)
+
+Comprehensive eval gates prevent bad models from shipping.
+
+## Deployment
+
+Gradual rollout:
+1. Shadow mode: New model runs alongside old, results compared
+2. Canary: 1% of traffic sees new model
+3. Incremental: 10%, 50%, 100% over days
+4. Holdback: Keep some users on old model for comparison
+
+Any regression triggers automatic rollback.
+
+## Monitoring
+
+In production, you can't manually check every prediction:
+- Prediction distribution monitoring (is output changing?)
+- Error rate monitoring (are we failing more?)
+- Latency monitoring (are we slowing down?)
+- Data drift detection (is input distribution changing?)
+
+Alerts trigger investigation before users complain.
+
+## The Feedback Loop
+
+User feedback (implicit and explicit) improves future models:
+- Localization success/failure → labels for hard examples
+- User corrections → ground truth for retraining
+- Engagement metrics → signal for what users value
+
+Closing this loop is what enables continuous improvement.
+
+## Lessons Learned
+
+1. **Invest in infrastructure early**: Retraining, deployment, monitoring save more time than model tweaks.
+
+2. **Reproducibility is essential**: Must be able to recreate any historical model.
+
+3. **Monitor everything**: You can't fix what you can't see.
+
+4. **Plan for failure**: Models will misbehave. Fast detection and rollback limit damage.

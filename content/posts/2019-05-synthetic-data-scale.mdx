@@ -1,0 +1,102 @@
+---
+title: "Scaling Synthetic Data: From Thousands to Millions"
+date: "2019-05-20"
+excerpt: "Building infrastructure to generate millions of training images - the engineering of a synthetic data factory."
+tags: ["Synthetic Data", "Infrastructure", "Rendering", "Scale", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Our synthetic data efforts have proven the concept. Now we need to scale from prototype (thousands of images) to production (millions per training run).
+
+## Scale Requirements
+
+Training a robust perception model needs:
+- **Hand tracking**: 5M+ images across poses, lighting, backgrounds
+- **Eye tracking**: 2M+ images across gaze directions, face shapes
+- **Scene understanding**: 10M+ images across environments, objects
+
+At our current rate (1000 images/day), the hand tracking dataset alone would take 14 years.
+
+## The Scaling Challenge
+
+### Compute
+Rendering bottleneck: ~5 seconds per image on high-end GPU.
+
+Solutions:
+- **Cloud burst**: Spin up 1000 GPU instances for render jobs
+- **Render optimization**: Denoising enables fewer samples
+- **Lower fidelity where okay**: Not every image needs ray tracing
+
+Target: 100,000 images/day sustained.
+
+### Asset Pipeline
+Diverse training needs diverse assets:
+- 1000+ 3D environments
+- 10,000+ objects
+- 500+ hand textures/shapes
+- Unlimited procedural variations
+
+Building asset pipelines with:
+- Automated acquisition from 3D repositories
+- Procedural variation of base assets
+- Quality validation gates
+
+### Variation Management
+How do you sample from a trillion possible configurations?
+
+Strategies:
+- **Stratified sampling**: Ensure coverage of known important factors
+- **Curriculum sampling**: Start uniform, then focus on failure cases
+- **Active learning**: Let the model tell you what it struggles with
+
+### Metadata and Versioning
+Every image needs:
+- Exact scene configuration (reproducibility)
+- Ground truth labels (automatic from render)
+- Variation parameters (for analysis)
+
+Storage and tracking for millions of images = database engineering problem.
+
+## Infrastructure Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Orchestration Layer                       │
+│  - Job scheduling                                            │
+│  - Resource allocation                                       │
+│  - Progress tracking                                         │
+└─────────────────────────────────────────────────────────────┘
+                              │
+         ┌────────────────────┼────────────────────┐
+         ▼                    ▼                    ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  Asset Service  │  │  Render Farm    │  │  Data Lake      │
+│  - Asset DB     │  │  - GPU cluster  │  │  - Image store  │
+│  - Variation    │  │  - Job workers  │  │  - Metadata DB  │
+│  - Validation   │  │  - Output queue │  │  - Versioning   │
+└─────────────────┘  └─────────────────┘  └─────────────────┘
+```
+
+## Cost Management
+
+Cloud GPU rendering is expensive:
+- 1000 GPUs × $2/hr × 24 hours = $48,000/day
+- 100M images = $4.8M in compute alone
+
+Cost reduction strategies:
+- **Spot instances**: 70% savings for fault-tolerant workloads
+- **Render optimization**: 2x speed = 50% cost
+- **Smart sampling**: Better coverage with fewer images
+
+Annual synthetic data budget: $2M. Must make it count.
+
+## Validation
+
+How do we know synthetic data is good?
+
+1. **Visual inspection**: Sample renders reviewed by humans
+2. **Distribution analysis**: Compare stats to real data
+3. **Model performance**: Ultimately, does training on it work?
+
+Building automated validation into the pipeline - no bad data reaches training.

@@ -1,0 +1,106 @@
+---
+title: "Learning from the Field: Post-Launch Telemetry"
+date: "2018-09-17"
+excerpt: "What we're learning from real users using real devices - the telemetry infrastructure and insights that drive product improvement."
+tags: ["Telemetry", "Analytics", "User Behavior", "Data", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Devices are in the wild. For the first time, we see how real users interact with our perception system. The data is humbling.
+
+## Telemetry Architecture
+
+Every Magic Leap One collects (with consent):
+- Tracking quality metrics (not position data)
+- Error events and crash logs
+- Performance counters
+- Feature usage statistics
+
+Data flow:
+```
+Device → Local Buffer → Batch Upload → Cloud Processing →
+Aggregation → Dashboards
+```
+
+Privacy-preserving: no raw images, no position data, no user-identifiable content. Aggregate statistics only.
+
+## What We're Measuring
+
+### Tracking Health
+- Tracking loss events per hour
+- Re-localization success rate
+- Time to first track after headset don
+- Sustained tracking duration
+
+### Performance
+- Frame rate distribution
+- Latency percentiles (p50, p95, p99)
+- Thermal throttling frequency
+- Battery drain rate during use
+
+### Feature Usage
+- Spatial mapping request frequency
+- Hand tracking activation rate
+- Eye tracking gaze events
+- Image tracking anchor count
+
+## Surprising Findings
+
+**Usage patterns differ from testing**:
+- Lab testing: controlled motions, clean environments
+- Real users: rapid head movements, cluttered spaces, challenging lighting
+
+**Lighting is the killer**:
+- 35% of tracking issues correlate with lighting extremes
+- Users near windows during day, in dark rooms at night
+- Our auto-exposure algorithms need work
+
+**Short sessions dominate**:
+- Median session: 8 minutes
+- 90th percentile: 45 minutes
+- Battery life less critical than we thought; instant-on more critical
+
+**Re-localization failure rate**:
+- 12% of relocalization attempts fail
+- Main cause: environment changed since map creation
+- Users don't understand why content moved
+
+## Action Items from Telemetry
+
+**Immediate fixes** (software update):
+1. Tune auto-exposure for extreme lighting
+2. Improve relocalization failure messaging
+3. Reduce tracking loss recovery time
+
+**V2 requirements**:
+1. Better low-light performance (sensor or algorithm)
+2. Persistent maps that handle change
+3. Faster cold start
+
+**Deeper investigation**:
+1. Categorize tracking loss events (is it sensor? algorithm? integration?)
+2. Understand environment diversity in user homes
+3. Correlate feature usage with satisfaction
+
+## The Feedback Loop
+
+Telemetry enables a virtuous cycle:
+1. Observe field behavior
+2. Identify failure patterns
+3. Reproduce in controlled test
+4. Fix and validate
+5. Deploy update
+6. Measure impact
+
+This cycle was impossible before launch. Now it's our primary improvement mechanism.
+
+## Privacy Considerations
+
+Every telemetry addition gets privacy review:
+- What's the minimum data needed?
+- Is it aggregatable without individual identification?
+- Could it be correlated with external data?
+- Is consent clear?
+
+We've rejected useful telemetry that crossed privacy lines. User trust is worth more than data.

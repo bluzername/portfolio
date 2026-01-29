@@ -1,0 +1,85 @@
+---
+title: "Synthetic Data at Meta Scale"
+date: "2020-11-16"
+excerpt: "Bringing synthetic data practices from Magic Leap to Meta - what scales, what doesn't, and new opportunities."
+tags: ["Synthetic Data", "Scale", "Training Data", "Deep Learning", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+At Magic Leap, I founded the synthetic data team. At Meta, I'm advocating for similar investment at much larger scale.
+
+## What's Different at Meta
+
+**Compute resources**: Access to datacenter-scale GPU clusters. Can generate 100x what we did at Magic Leap.
+
+**Real data abundance**: Meta has enormous labeled and unlabeled real datasets. Synthetic data supplements rather than replaces.
+
+**Existing infrastructure**: Rendering pipelines, asset libraries, job scheduling already exist. Don't need to build from scratch.
+
+**Team size**: Can staff multiple pods focused on different aspects of synthetic data.
+
+## The Pitch for VPS Synthetic Data
+
+VPS needs training data for:
+- Feature detection and description
+- Image retrieval networks
+- Depth estimation (if using monocular)
+- Semantic understanding
+
+Real data challenges:
+- Geographic bias (mostly Western cities)
+- Temporal bias (more summer, daytime)
+- Condition bias (good weather, good lighting)
+- Privacy constraints (faces, license plates)
+
+Synthetic data can fill these gaps:
+- Any geography (procedural city generation)
+- Any time/weather (simulation control)
+- Any condition (randomization)
+- No privacy concerns (no real people)
+
+## Architecture for Scale
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  Synthetic Data Platform                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
+│  │    Scene      │  │   Rendering   │  │     Data      │   │
+│  │   Generation  │  │   Service     │  │   Catalog     │   │
+│  └───────────────┘  └───────────────┘  └───────────────┘   │
+│          │                  │                  │            │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
+│  │  Asset        │  │   Domain      │  │   Quality     │   │
+│  │  Library      │  │   Adaptation  │  │   Validation  │   │
+│  └───────────────┘  └───────────────┘  └───────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Reusable components that any team can leverage.
+
+## Lessons That Transfer
+
+From Magic Leap:
+- **Domain randomization** remains essential for sim-to-real transfer
+- **Sensor modeling** must be accurate (noise, distortion, artifacts)
+- **Validation pipelines** catch bad synthetic data before it reaches training
+- **Curriculum sampling** is more effective than uniform random
+
+## New Opportunities
+
+Meta-specific advantages:
+- **Real assets at scale**: 3D reconstructions from users can become synthetic assets (with consent)
+- **Cross-team leverage**: Synthetic data built for VPS also helps Quest hand tracking, Ray-Ban glasses, etc.
+- **Research collaboration**: Access to FAIR researchers working on simulation
+
+## Investment Roadmap
+
+Phase 1 (Q4 2020): Prototype pipeline for VPS-specific synthetic data
+Phase 2 (2021): Scale to support VPS training needs
+Phase 3 (2022): Generalize platform for Reality Labs-wide use
+
+Getting buy-in from leadership. The Magic Leap experience helps make the case.

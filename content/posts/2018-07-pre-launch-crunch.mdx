@@ -1,0 +1,90 @@
+---
+title: "Pre-Launch Crunch: Debugging Under Pressure"
+date: "2018-07-23"
+excerpt: "The final push before device launch - triaging bugs, making hard cuts, and keeping the team functional under extreme pressure."
+tags: ["Launch", "Debugging", "Leadership", "Pressure", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Launch is next month. We have more bugs than we can fix. The question isn't what to fix, but what to ship broken.
+
+## The Bug Triage Framework
+
+Every bug gets classified:
+
+**Ship blocker**: Cannot launch with this bug
+- Safety issues
+- Data loss
+- Crashes >1% of sessions
+- Core functionality broken
+
+**Launch quality**: Should fix before launch
+- Poor user experience
+- Performance below target
+- Features partially working
+
+**Known issue**: Document and fix post-launch
+- Edge cases
+- Cosmetic issues
+- Features that degrade gracefully
+
+The discipline: only ship blockers block the ship.
+
+## Our Current State
+
+Perception bugs in triage:
+- **3 ship blockers**: tracking loss in specific lighting, depth sensor timeout, eye tracking crash
+- **12 launch quality**: various accuracy and performance issues
+- **47 known issues**: edge cases accumulated over months
+
+We have 4 weeks. Assuming 1 engineer-week per ship blocker on average, and some blockers will spawn new blockers during fix, we're cutting it close.
+
+## Debugging Strategy
+
+### War Room
+Physical (and virtual) space where:
+- All sensor data from failing devices is accessible
+- Experts from each subsystem are co-located
+- Decision-making authority is present
+
+No waiting for meetings or email chains.
+
+### Hypothesis-Driven Debugging
+For each blocker:
+1. Reproduce reliably
+2. Form hypothesis about root cause
+3. Design experiment to test hypothesis
+4. Execute and analyze
+5. If hypothesis confirmed, fix. If not, return to step 2.
+
+Avoid shotgun debugging (change random things and hope).
+
+### Failure Taxonomy
+We're categorizing every failure:
+- Where did it manifest? (SLAM, depth, eye tracking)
+- What triggered it? (lighting, motion, user action)
+- Why did it happen? (sensor issue, algorithm bug, integration error)
+
+Patterns emerge. Three "different" bugs might share a root cause.
+
+## Hard Cuts
+
+Features we're cutting:
+- Hand tracking gesture recognition (basic tracking stays, gestures don't)
+- Outdoor SLAM (indoor-only for launch)
+- Eye tracking analytics (tracking works, metrics don't)
+
+Painful, but shipping something great is better than shipping everything mediocre.
+
+## Team Health
+
+Extended crunch is unsustainable. Managing:
+- Mandatory time off after each ship-blocker fix
+- Visible appreciation for heroic efforts
+- Permission to escalate blockers that shouldn't be
+- Protecting people from unreasonable asks
+
+The launch will happen. The team needs to be intact afterward.
+
+One month to go.

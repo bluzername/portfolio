@@ -1,0 +1,81 @@
+---
+title: "Quest 3 Launch: VPS at Consumer Scale"
+date: "2023-09-18"
+excerpt: "Quest 3 brings VPS to mainstream consumers - the largest deployment yet and what we learned."
+tags: ["Quest 3", "Launch", "Scale", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Quest 3 launched with VPS enabled by default for MR experiences. Our largest deployment by far.
+
+## Launch Numbers
+
+First week:
+- 500K+ devices activated
+- 2M+ VPS queries served
+- 50K+ unique locations attempted
+- 87% success rate in covered areas
+
+Scale we've never seen before.
+
+## What Worked
+
+**Infrastructure scaling**: Invested heavily in Q2-Q3. Handled launch load without incident.
+
+**On-device caching**: Popular locations cached on device. 40% of queries served locally.
+
+**Developer readiness**: Launch apps worked. First-party MR experiences performed well.
+
+**User experience**: When VPS works, users don't notice it (which is good).
+
+## What Didn't
+
+**Coverage gaps**: Many users in unmapped areas. "VPS not available" frustrating.
+
+**Outdoor sunlight**: Still challenging. Accuracy drops in bright conditions.
+
+**Onboarding confusion**: Users don't understand what VPS does or when it's working.
+
+**Power consumption**: Higher than target in continuous MR mode.
+
+## User Feedback Themes
+
+**Positive**:
+- "Content stays in place - feels like magic"
+- "Navigation actually works"
+- "Shared MR with friend was amazing"
+
+**Negative**:
+- "Doesn't work at my house" (not mapped)
+- "Glitchy outside in the afternoon" (sunlight)
+- "Drains battery too fast"
+
+## Rapid Response
+
+First month fixes:
+- Expanded coverage to top-requested areas
+- Improved sunlight robustness (server-side model update)
+- Better error messaging
+- Power optimization patch
+
+Advantages of server-side components: can update without device update.
+
+## Scale Lessons
+
+1. **Long tail is really long**: The locations users want are incredibly diverse. Can't map everything.
+
+2. **Good enough beats perfect**: 80% accuracy everywhere beats 95% in limited areas.
+
+3. **Failure UX matters as much as success**: How VPS fails determines user perception.
+
+4. **Self-service is essential**: Can't manually map everywhere users want.
+
+## Looking Forward
+
+Quest 3 establishes VPS as core infrastructure. Now the question is expansion:
+- More coverage (crowdsourced + partnerships)
+- Better indoor (still behind)
+- Glasses integration (next frontier)
+
+Three years from concept to consumer scale. The foundation is set.

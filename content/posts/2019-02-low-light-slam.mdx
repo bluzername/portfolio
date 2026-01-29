@@ -1,0 +1,87 @@
+---
+title: "SLAM in Low Light: Pushing the Sensor Limits"
+date: "2019-02-18"
+excerpt: "Techniques for maintaining visual SLAM in challenging lighting conditions - from sensor improvements to algorithmic adaptations."
+tags: ["SLAM", "Low Light", "Sensors", "Computer Vision", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Low light kills visual SLAM. Fewer photons means noisier images, fewer features, more tracking failures. V2 must handle rooms lit by candles.
+
+## The Low-Light Challenge
+
+At 1 lux (moonlit night):
+- Standard camera: ~10 photons per pixel per frame
+- SNR: under 10dB (signal buried in noise)
+- Feature detection: mostly false positives
+
+At 100 lux (dim indoor):
+- ~1000 photons per pixel per frame
+- SNR: ~30dB (usable but not great)
+- Feature detection: functional but degraded
+
+Current system fails below ~30 lux. V2 target: reliable at 3 lux.
+
+## Sensor-Level Improvements
+
+### Larger Pixels
+More photon collection area. Trade-off: fewer pixels.
+- V1: 3μm pixels, 640x480
+- V2 option: 4μm pixels, 1280x720
+
+Net: 4x more light per pixel, 4x more pixels total = 16x more photons.
+
+### Higher Quantum Efficiency
+Better conversion of photons to electrons.
+- Standard silicon: 50-60% QE
+- BSI (backside illuminated): 70-80% QE
+
++30% more signal.
+
+### Lower Read Noise
+Modern sensors achieving under 1e- read noise vs V1's 2-3e-.
+
+At very low light, read noise dominates. Lower noise = usable signal at lower photon counts.
+
+### Global Shutter Considerations
+Global shutter sensors typically have higher noise than rolling shutter. But rolling shutter causes artifacts with fast motion.
+
+We need global shutter for tracking. Accepting some noise penalty.
+
+## Algorithmic Improvements
+
+### Feature Detection Adaptation
+- **Lower detection thresholds**: Accept more features, let matching filter bad ones
+- **Larger patches**: More pixels in descriptor = more robust to noise
+- **Multi-scale**: Features visible at different scales
+
+### Tracking Strategy Changes
+- **Tighter IMU coupling**: Trust IMU more when vision is poor
+- **Feature lifetime tracking**: Reuse features across more frames
+- **Degraded mode**: Reduce update rate, increase integration time
+
+### Learning-Based Features
+Trained feature detectors may outperform hand-crafted in low light:
+- SuperPoint, D2-Net style architectures
+- Trained on low-light data (real + synthetic)
+
+Exploring this for V2.
+
+## IR Illumination Option
+
+Could we add IR illumination for tracking?
+- Pro: Solves low light completely
+- Con: Power consumption, battery impact, outdoor interference
+
+Current direction: passive cameras with active assist for extreme cases.
+
+## Testing Protocol
+
+New low-light test suite:
+- 1 lux controlled environment
+- Calibrated neutral density filters for repeatability
+- Standardized motion profiles
+- Pass criteria: under 3 tracking losses per 10 minutes at 3 lux
+
+V2 sensors arriving for evaluation next month.

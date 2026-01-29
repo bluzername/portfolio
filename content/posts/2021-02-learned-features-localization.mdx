@@ -1,0 +1,102 @@
+---
+title: "Learned Features for Visual Localization"
+date: "2021-02-15"
+excerpt: "Moving from hand-crafted to learned feature descriptors for VPS - training, deployment, and performance gains."
+tags: ["Deep Learning", "Features", "Localization", "Computer Vision", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Classical features (SIFT, ORB) have served well, but learned features are now beating them significantly. Time to make the switch.
+
+## The Case for Learned Features
+
+Classical features struggle with:
+- Large viewpoint changes (>30° rotation)
+- Illumination changes (day vs night)
+- Seasonal changes (snow, foliage)
+- Weather (rain, fog)
+
+Learned features, trained on diverse data, handle these better.
+
+Benchmarks (HPatches, Aachen Day-Night):
+- SIFT: 45% localization success
+- SuperPoint + SuperGlue: 78% localization success
+
+The gap is real and significant.
+
+## Feature Learning Approaches
+
+### Detection + Description (SuperPoint style)
+Train network to jointly detect keypoints and compute descriptors.
+```
+Image → CNN → Keypoint Heatmap + Descriptor Map
+```
+Advantages: End-to-end trained, fast inference
+Challenges: Fixed grid output, quantization effects
+
+### Dense Description (D2-Net style)
+Describe every pixel, detect from description scores.
+```
+Image → CNN → Dense Descriptors → Keypoint Detection
+```
+Advantages: No separate detection, more flexible
+Challenges: Slower, more memory
+
+### Hierarchical (HLoc style)
+Combine global retrieval network with local features.
+```
+Image → Global Net → Candidates → Local Features → Pose
+```
+Advantages: Best accuracy, handles large databases
+Challenges: Multiple networks, complex pipeline
+
+## Training for VPS
+
+Off-the-shelf models are trained on academic datasets. We need:
+- More geographic diversity
+- More condition diversity
+- Quest-specific camera characteristics
+
+Training data sources:
+- Synthetic renders (full control, unlimited)
+- Real captures from VPS mapping (authentic but limited)
+- Public datasets (diversity but no control)
+
+Training approach:
+- Pre-train on large public data
+- Fine-tune on VPS-specific data
+- Domain adaptation for synthetic-to-real transfer
+
+## Deployment Considerations
+
+Learned features are more expensive than classical:
+- Model size: 10MB+ (vs. minimal for ORB)
+- Inference: 30-50ms on mobile (vs. 5ms for ORB)
+- Memory: Feature maps consume GPU memory
+
+Optimizations:
+- Knowledge distillation to smaller student network
+- INT8 quantization with minimal accuracy loss
+- TensorRT/NNAPI deployment for hardware acceleration
+
+Current student model: 2MB, 25ms on Quest.
+
+## A/B Testing Plan
+
+Rolling out gradually:
+1. Internal dogfooding with learned features
+2. Small percentage external users
+3. Measure localization success rate
+4. Expand if metrics improve
+
+Fallback: Classical features still available if learned fails.
+
+## Results So Far
+
+Internal testing shows:
+- 40% reduction in localization failures
+- Better performance in challenging lighting
+- Comparable latency after optimization
+
+Planning broader rollout Q2 2021.

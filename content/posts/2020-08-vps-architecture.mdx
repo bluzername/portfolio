@@ -1,0 +1,120 @@
+---
+title: "Visual Positioning System: Architecture Overview"
+date: "2020-08-17"
+excerpt: "High-level architecture of the Visual Positioning Service - how XR devices can localize themselves in the world."
+tags: ["VPS", "Architecture", "Localization", "3D Mapping", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Building a system that lets any XR device know where it is in the world. Here's how we're thinking about the architecture.
+
+## The Problem
+
+User puts on headset. Opens an AR experience anchored to a specific physical location (e.g., a sculpture in a park).
+
+Device needs to:
+1. Recognize "I'm near the park"
+2. Localize precisely "I'm at position X,Y,Z with orientation R"
+3. Track continuously as user moves
+4. Handle the sculpture not being where it was mapped
+
+This is Visual Positioning Service.
+
+## System Components
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      VPS Architecture                         │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌─────────────┐    ┌─────────────────┐    ┌─────────────┐  │
+│  │   Mapping   │    │  Map Storage &  │    │Localization │  │
+│  │   Service   │───►│   Retrieval     │───►│  Service    │  │
+│  │             │    │                 │    │             │  │
+│  └─────────────┘    └─────────────────┘    └─────────────┘  │
+│        │                                          │          │
+│        │           ┌─────────────────┐           │          │
+│        └──────────►│   Ground Truth  │◄──────────┘          │
+│                    │   & Validation  │                      │
+│                    └─────────────────┘                      │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Mapping Service
+Converts raw sensor data (images, depth, poses) into 3D maps:
+- Structure from Motion (SfM) for sparse reconstruction
+- Multi-View Stereo (MVS) for dense reconstruction
+- Semantic understanding for landmark detection
+
+Input: Crowd-sourced images with metadata
+Output: Georeferenced 3D maps with visual features
+
+### Map Storage & Retrieval
+Manages the global map database:
+- Efficient storage at world scale
+- Spatial indexing for fast retrieval
+- Versioning for map updates
+- Privacy controls (whose data, where accessible)
+
+### Localization Service
+Matches device observations to stored maps:
+- Image retrieval: Find candidate map regions
+- Feature matching: Establish 2D-3D correspondences
+- Pose estimation: Compute 6DoF device pose
+- Verification: Confidence scoring, outlier rejection
+
+### Ground Truth & Validation
+Ensures map quality and localization accuracy:
+- Reference measurements from survey equipment
+- Automated accuracy regression testing
+- Feedback loop to improve mapping
+
+## On-Device vs Cloud
+
+**On-device**:
+- Real-time tracking (60Hz VIO)
+- Local feature extraction
+- Privacy-preserving (no images leave device)
+
+**Cloud**:
+- Large-scale mapping (can't run SfM on device)
+- Map storage (too large for device)
+- Initial localization (match against global database)
+
+**Hybrid flow**:
+1. Device captures images
+2. Extract features on-device
+3. Send features (not images) to cloud
+4. Cloud returns pose estimate
+5. Device refines locally with VIO
+
+## Scale Challenges
+
+**Mapping scale**: We want to map millions of locations. Even with crowd-sourcing, that's a massive computational challenge.
+
+**Storage scale**: High-quality 3D maps are large. Millions of locations × GB per location = petabytes.
+
+**Query scale**: Millions of devices querying simultaneously. Low latency required.
+
+**Update scale**: World changes. Maps must stay current.
+
+Meta's infrastructure helps, but the problems remain hard.
+
+## Privacy by Design
+
+VPS involves sensitive data:
+- User location
+- Images of real world
+- Presence at specific locations
+
+Principles:
+- Minimize data collection
+- Process locally when possible
+- Clear consent for any cloud interaction
+- No selling/sharing of location data
+
+Privacy review is a gate for every feature.
+
+More details on individual components in coming posts.

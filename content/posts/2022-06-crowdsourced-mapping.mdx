@@ -1,0 +1,100 @@
+---
+title: "Crowdsourced Mapping: Scaling Through Users"
+date: "2022-06-20"
+excerpt: "Enabling users to contribute to mapping - the technical architecture, privacy model, and quality challenges."
+tags: ["Crowdsourcing", "Mapping", "Scale", "Privacy", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Professional mapping doesn't scale. There are millions of places people want AR experiences; we can't map them all ourselves. Users must contribute.
+
+## The Vision
+
+Any Quest user can contribute to mapping:
+1. Opt in to contribution program
+2. Device captures during normal use
+3. Captures uploaded (privacy-preserved)
+4. Aggregated into maps
+5. Maps available for VPS
+
+Everyone benefits from collective mapping.
+
+## Privacy Architecture
+
+Users contributing data need strong privacy guarantees:
+
+### On-Device Processing
+Raw images never leave device:
+- Extract features on-device
+- Remove identifying information (faces, screens)
+- Compress to minimal representation
+
+### Differential Privacy
+Can't determine if specific user contributed:
+- Aggregate contributions before storage
+- Add noise to prevent individual identification
+- Minimum contribution thresholds
+
+### User Control
+- Clear opt-in (not default)
+- Contribution visibility (see what you've shared)
+- Revocation (delete your contributions)
+- Geographic limits (don't map near home)
+
+## Quality Challenges
+
+User contributions vary wildly:
+- Motion blur from casual capture
+- Poor lighting conditions
+- Obstructed views
+- Duplicate coverage
+
+Quality pipeline:
+1. **Filtering**: Reject unusable captures
+2. **Scoring**: Rank captures by quality
+3. **Selection**: Choose best for mapping
+4. **Validation**: Verify accuracy before publishing
+
+90% of contributions are filtered out. The 10% are gold.
+
+## Incentive Design
+
+Why would users contribute?
+
+**Intrinsic**: Help build the AR future
+**Social**: Recognition for contributions
+**Utility**: Better maps where you care about
+**Gamification**: Achievements, progress bars
+
+Avoid:
+- Payment (attracts gaming)
+- Mandatory contribution (ethics)
+
+## Coverage Strategy
+
+Crowdsourced maps complement professional maps:
+- Professional: High-value, high-traffic locations
+- Crowdsourced: Long-tail, user-specific locations
+
+User contributions fill gaps professionals can't reach economically.
+
+## Results So Far
+
+Beta program (10,000 users):
+- 1M+ contributions received
+- 50K passed quality filter
+- 100 new locations mapped (that we couldn't otherwise)
+- User satisfaction: 78% would recommend
+
+Scaling to general availability in 2023.
+
+## Learnings
+
+1. **Privacy concerns are real**: Many users opt out due to privacy worry. Must earn trust.
+
+2. **Quality bar matters**: Low-quality maps hurt more than help.
+
+3. **Feedback loops work**: Users who see their contributions used contribute more.
+
+4. **Long-tail is long**: Most contributions are from few users. Engagement is challenging.

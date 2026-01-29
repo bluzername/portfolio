@@ -1,0 +1,37 @@
+---
+title: "Entering the Mixed Reality Arena: First Weeks at Magic Leap"
+date: "2016-02-15"
+excerpt: "Reflections on joining one of the most ambitious hardware startups in history, and the technical challenges that await in building a true mixed-reality device."
+tags: ["Mixed Reality", "Magic Leap", "Career", "XR"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+After years in defense and cyber-security, I've made a leap (pun intended) into consumer hardware. Magic Leap is attempting something that has never been done at scale: a wearable device that seamlessly blends digital content with the physical world.
+
+## Why Mixed Reality?
+
+The fundamental technical challenges here are extraordinary:
+
+1. **Display technology** that can project photons directly into the eye at multiple focal planes
+2. **Real-time environment understanding** - the device must know exactly where it is and what surrounds it
+3. **Ultra-low latency** - any delay between head movement and display update causes nausea
+4. **All-day battery life** in a form factor people will actually wear
+
+Coming from systems where power consumption was measured in watts, not milliwatts, the constraints here are humbling.
+
+## The Perception Problem
+
+My initial focus is on the perception sensor suite. For MR to work, the device needs:
+
+- **SLAM (Simultaneous Localization and Mapping)** - building a 3D map while tracking the device's position within it
+- **Depth sensing** - understanding the geometry of the environment in real-time
+- **Eye tracking** - knowing where the user is looking for foveated rendering and interaction
+
+Each of these is a PhD-level problem. Solving all three simultaneously on embedded hardware with thermal constraints? That's the challenge.
+
+## Initial Observations
+
+The team here is exceptional - optical physicists, SLAM researchers, display engineers. But I'm already seeing a familiar pattern: brilliant specialists who don't always speak the same language. Part of my role will be bridging these domains.
+
+More technical deep-dives to come as I get hands-on with the sensor architecture.

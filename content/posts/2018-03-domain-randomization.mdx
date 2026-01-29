@@ -1,0 +1,91 @@
+---
+title: "Domain Randomization: Brute-Forcing the Reality Gap"
+date: "2018-03-12"
+excerpt: "Using extreme variation in synthetic data to bridge the sim-to-real gap - theory, practice, and hard-won lessons."
+tags: ["Domain Randomization", "Synthetic Data", "Sim-to-Real", "Deep Learning", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+The reality gap keeps haunting us. Models trained on beautiful synthetic data fail on ugly real sensor images. Domain randomization is our main weapon.
+
+## The Core Idea
+
+If you can't make synthetic data perfectly match reality, make it match *everything*:
+
+> "If the model has seen enough variation in simulation, reality is just another variation."
+
+Randomize:
+- Textures (including unrealistic ones)
+- Lighting (extreme conditions)
+- Noise (more than real sensors)
+- Geometry (within plausible bounds)
+- Camera parameters (beyond spec)
+
+The model learns features robust to all these variations, including the specific variation called "real data."
+
+## What We Randomize
+
+### Visual Properties
+- **Textures**: Random colors, procedural patterns, photo textures
+- **Lighting**: Direction, intensity, color, number of sources
+- **Shadows**: Hard/soft, direction, intensity
+- **Backgrounds**: Uniform colors to complex scenes
+
+### Sensor Properties
+- **Noise**: Gaussian, Poisson, salt-and-pepper, beyond realistic levels
+- **Blur**: Motion, defocus, varying amounts
+- **Exposure**: Under and over-exposed
+- **Compression artifacts**: JPEG-like degradation
+
+### Geometric Properties
+- **Object scale**: ±20% from nominal
+- **Object position**: Jitter and displacement
+- **Viewpoint**: Broader range than expected
+
+### Hand-Specific
+- **Skin tone**: Full spectrum including unrealistic colors
+- **Hand shape**: Scale, finger lengths, joint angles
+- **Accessories**: Rings, watches, sleeves
+
+## Randomization Magnitude
+
+The key insight: **more randomization isn't always better**.
+
+Too little: model overfits to synthetic domain
+Too much: model can't learn meaningful features, sees only noise
+Sweet spot: enough variation to be robust, not so much that signal is lost
+
+We tune randomization magnitude per-factor using validation on real data.
+
+## Curriculum Strategy
+
+Some factors are better introduced gradually:
+
+1. Start with realistic rendering
+2. Add noise factors
+3. Add geometric variation
+4. Add extreme texture randomization
+
+This curriculum helps the model learn basic features before confronting extreme variation.
+
+## Results
+
+Hand keypoint detection:
+- Trained on synthetic only (no randomization): 45mm error on real data
+- Trained on synthetic with randomization: 12mm error on real data
+- Trained on real data: 8mm error on real data
+
+Domain randomization closed 85% of the gap. The remaining 15% comes from:
+- Distribution mismatch in poses
+- Subtle artifacts not captured by randomization
+- Real data has implicit regularization effects
+
+## Failure Modes
+
+Domain randomization doesn't help with:
+- Systematic biases in synthetic data (e.g., always-centered objects)
+- Missing factors of variation (e.g., motion blur patterns we didn't model)
+- Out-of-distribution inputs that are unlike anything in randomization range
+
+Continuous refinement is needed. As we discover failure cases, we add new randomization factors.

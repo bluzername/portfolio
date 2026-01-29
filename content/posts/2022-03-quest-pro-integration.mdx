@@ -1,0 +1,89 @@
+---
+title: "Quest Pro and Mixed Reality: New Requirements for VPS"
+date: "2022-03-21"
+excerpt: "How Quest Pro's mixed reality capabilities change the requirements for visual positioning - higher accuracy, lower latency, always-on."
+tags: ["Quest Pro", "Mixed Reality", "VPS", "Requirements", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Quest Pro brings full-color passthrough and mixed reality. VPS needs to level up to match.
+
+## Quest Pro Capabilities
+
+- High-resolution color passthrough cameras
+- Better tracking (more cameras, faster IMU)
+- Improved processors (more compute available)
+- Eye tracking and face tracking
+
+MR mode: Digital content mixed with real world.
+
+## VPS Requirements Shift
+
+### Higher Accuracy Needed
+VR: Virtual content in virtual world. Small errors invisible.
+MR: Digital content on real surfaces. Errors are jarring.
+
+**VR target**: 10cm accuracy acceptable
+**MR target**: 2cm accuracy needed for believable placement
+
+### Lower Latency Needed
+VR: Content locked to headset. Latency to world doesn't matter.
+MR: Content locked to real world. Latency causes visible drift.
+
+**VR target**: 500ms initial localization fine
+**MR target**: under 200ms initial, continuous refinement
+
+### Always-On Requirements
+VR: Localize once at session start.
+MR: Continuous localization as user moves through space.
+
+Power budget implications: Can't be a power hog if always running.
+
+## Technical Adaptations
+
+### Continuous Localization
+VPS becomes part of the tracking pipeline:
+```
+VIO tracks frame-to-frame
+VPS corrects drift periodically
+Combined: Accurate + responsive
+```
+
+VPS queries every few seconds, not just at startup.
+
+### Tighter Integration
+VPS and VIO share information:
+- VIO provides motion prior to VPS
+- VPS provides absolute correction to VIO
+- Kalman filter combines both
+
+Previously separate systems, now fused.
+
+### Quality of Service
+MR needs predictable performance:
+- Bounded latency (no 5-second queries)
+- Graceful degradation (don't freeze on failure)
+- Confidence indication (know when uncertain)
+
+## Development Timeline
+
+Quest Pro ships October 2022.
+VPS MR support target: Launch readiness for Quest Pro.
+
+We have 6 months. It's aggressive but achievable.
+
+Key milestones:
+- Q1: Architecture for continuous localization
+- Q2: Integration with VIO team
+- Q3: Performance optimization
+- Q4: Polish and launch
+
+## The Opportunity
+
+Quest Pro positions VPS as core infrastructure:
+- Every MR experience potentially uses VPS
+- Pre-installed on millions of devices
+- Foundation for spatial computing future
+
+Higher stakes, higher visibility, higher impact.

@@ -1,0 +1,69 @@
+---
+title: "Magic Leap One Ships: Reflections on Launch Day"
+date: "2018-08-08"
+excerpt: "We shipped a mixed reality headset. Reflections on what it means, what we got right, what we got wrong, and what comes next."
+tags: ["Launch", "Magic Leap", "Mixed Reality", "Career", "Reflection"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Magic Leap One Creator Edition is shipping today. After two and a half years, the device is real and going to customers.
+
+## What We Shipped
+
+The perception system in every Magic Leap One includes:
+- **6DoF head tracking**: Visual-inertial odometry at 60Hz, under 1mm accuracy indoors
+- **Spatial mapping**: Real-time 3D mesh generation
+- **Plane detection**: Horizontal and vertical surfaces for content placement
+- **Eye tracking**: Gaze vector for foveated rendering and interaction
+- **Image tracking**: Fiducial markers for spatial anchors
+
+Each of these was a research problem when I started. Each is now a production feature.
+
+## What Went Right
+
+**Synthetic data investment paid off**: Our eye tracking and hand tracking models benefit enormously from procedural data generation. We couldn't have collected enough real data.
+
+**Calibration infrastructure**: The production calibration system works. Yield is above target. Quality is consistent.
+
+**Sensor architecture choices**: ToF depth and global shutter tracking cameras were the right calls. We're not fighting sensor limitations.
+
+**Team resilience**: The final push was brutal, but the team held together. Nobody burned out catastrophically.
+
+## What Went Wrong
+
+**Outdoor performance**: SLAM doesn't work reliably outside. We knew this, but hoped to solve it. We didn't. It's a known limitation.
+
+**Power consumption**: We're higher than spec. Battery life is shorter than we wanted. Thermal throttling kicks in sooner than ideal.
+
+**Hand tracking scope**: Gesture recognition was cut. Users get basic hand tracking but not the natural interaction we envisioned.
+
+**Polish gap**: Many edge cases have rough edges. The core works, but it doesn't feel finished in the way Apple products do.
+
+## Market Reality
+
+The reviews are... mixed. The technology is impressive. The price ($2,295) is high. The content ecosystem is thin. The form factor is chunky.
+
+We built what we could build. The market will decide if it's enough.
+
+## What I Learned
+
+**Shipping is a muscle**: You only learn to ship by shipping. All the planning, process, and preparation matter less than the experience of actually getting something out the door.
+
+**Hardware is unforgiving**: Software bugs can be patched. Hardware ships with its limitations baked in. The decisions we made in 2016 determined what was possible in 2018.
+
+**The goal isn't the device**: The goal is enabling experiences that weren't possible before. The device is necessary but not sufficient.
+
+## What's Next
+
+For the product:
+- Software updates to improve tracking
+- Content partnerships to fill the experience gap
+- Iteration toward V2 with lessons learned
+
+For me:
+- Shifting focus from V1 firefighting to V2 architecture
+- Scaling the synthetic data platform
+- Developing the next generation of perception capabilities
+
+We shipped. Now the real work begins.

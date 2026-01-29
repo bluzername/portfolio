@@ -1,0 +1,95 @@
+---
+title: "Hand Tracking V2: Gestures, Range, and Reliability"
+date: "2019-03-25"
+excerpt: "Designing a full-featured hand tracking system for V2 - gesture recognition, extended range, and the training data challenge."
+tags: ["Hand Tracking", "Gestures", "Deep Learning", "Mixed Reality", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+V1 shipped basic hand tracking. V2 needs hands as a primary input modality - gestures, precision, and reliability that rivals controllers.
+
+## V2 Hand Tracking Requirements
+
+| Capability | V1 | V2 Target |
+|------------|-----|-----------|
+| Range | 30-50cm | 20-80cm |
+| Accuracy | 15mm | 5mm fingertip |
+| Latency | 45ms | 20ms |
+| Gestures | None | Pinch, grab, point, palm, custom |
+| Occlusion handling | Poor | Robust |
+| Two-hand tracking | Limited | Full |
+
+## Architecture Changes
+
+### Depth Sensor Upgrade
+V1: 320x240 depth
+V2: 640x480 depth
+
+4x more depth points = much better hand surface reconstruction.
+
+### Additional Camera
+Considering a dedicated hand-tracking camera:
+- Positioned for optimal hand viewing angle
+- Higher frame rate (90Hz vs 30Hz depth)
+- Focused on near-field
+
+Trade-off: cost, power, calibration complexity.
+
+### Neural Network Upgrade
+V1: Custom CNN, 800K parameters
+V2: Larger model on dedicated NPU, ~5M parameters
+
+NPU enables running a more capable model within power budget.
+
+## Gesture Recognition
+
+Gestures are harder than tracking:
+
+**Temporal modeling**: Gestures are sequences, not frames
+- LSTM or Transformer for temporal context
+- Gesture boundaries (start/end) are ambiguous
+
+**False positive cost**: Accidental gestures are worse than missed gestures
+- High precision threshold
+- Confirmation mechanisms (hold, repeat)
+
+**Cultural variation**: Gestures mean different things globally
+- Configurable gesture sets
+- User-trainable custom gestures
+
+### V2 Gesture Set (Launch)
+1. **Pinch**: Thumb + index fingertip touch → select/confirm
+2. **Grab**: Close fist → grab object
+3. **Point**: Index extended → cursor/ray
+4. **Palm**: Open palm facing device → stop/cancel
+5. **Swipe**: Quick hand movement → scroll/navigate
+
+## Training Data Strategy
+
+### Real Data
+- Capture rig with multiple cameras + depth sensors
+- 100+ subjects for diversity
+- Controlled + natural motions
+- Ground truth from marker-based mocap
+
+### Synthetic Data
+- Procedural hand model with texture/shape variation
+- Physics-based grasping poses
+- Domain randomization for robustness
+- 10x scale vs real data
+
+### Semi-Supervised
+- Large unlabeled video datasets
+- Learn from consistency (same hand, different views)
+- Self-training on high-confidence predictions
+
+## Interaction Design Feedback
+
+Working with UX team on what users actually want:
+- Direct manipulation feels most natural
+- Gestures for mode switches, not continuous control
+- Hand fatigue ("gorilla arm") limits extended use
+- Audio/haptic feedback essential for gesture confirmation
+
+The best hand tracking is invisible - users think about the action, not the hand.

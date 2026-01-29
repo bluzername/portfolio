@@ -1,0 +1,78 @@
+---
+title: "Rendering for Perception: Not Your Typical Graphics Pipeline"
+date: "2017-10-16"
+excerpt: "Why rendering for synthetic data differs from gaming or film - physically accurate sensor simulation over visual beauty."
+tags: ["Rendering", "Synthetic Data", "Sensors", "Graphics", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Game engines optimize for "looks good at 60fps." Perception training needs "measures correctly at any cost." The difference is profound.
+
+## Game Engine Limitations
+
+Unity and Unreal are amazing for games. For perception training:
+
+**Approximate physics**: Rasterization takes shortcuts that break physical accuracy. Shadows are fake, reflections are screen-space tricks, subsurface scattering is empirical.
+
+**Fixed camera model**: Built-in cameras assume perfect pinhole or simple lens models. No sensor noise, no rolling shutter, no radiometric accuracy.
+
+**RGB only**: No depth channel that matches real ToF/stereo. No IR simulation.
+
+**Optimized for beauty**: Temporal anti-aliasing, post-processing effects - all designed to look good to humans, not train neural networks.
+
+## What Perception Rendering Needs
+
+### Radiometric Accuracy
+Light transport must be physically correct:
+- Conservation of energy
+- Correct BRDF evaluation
+- Accurate light source modeling (not point lights, but area sources with falloff)
+
+### Sensor Modeling
+The render output should match sensor output:
+- Add realistic noise (shot, read, fixed pattern)
+- Simulate lens distortion, vignetting, chromatic aberration
+- Model shutter type (global/rolling) and exposure effects
+- For depth: simulate ToF physics or stereo matching
+
+### Geometric Precision
+Training semantic segmentation needs perfect masks. Approximate mesh rendering won't do:
+- Sub-pixel accuracy for edges
+- Correct occlusion ordering
+- Accurate thin structures (hair, fences)
+
+## Our Rendering Stack
+
+```
+USD Scene Description
+    ↓
+Physics-Based Path Tracer (custom)
+    ↓
+Sensor Simulation (noise, lens, etc.)
+    ↓
+Training-Ready Output (RGB + depth + labels + metadata)
+```
+
+We're building on top of a path tracer rather than a rasterizer. Slower, but correct.
+
+## Speed vs Accuracy Trade-off
+
+Path tracing is slow. Convergence needs 100+ samples per pixel. For a 640×480 image, that's 30+ million rays minimum.
+
+Strategies:
+- **Denoising**: Machine learning denoising allows fewer samples with similar quality
+- **Adaptive sampling**: Focus rays on complex regions
+- **GPU acceleration**: OptiX/RTX path tracing is getting fast
+- **Hybrid**: Use rasterization for simple cases, path tracing for complex lighting
+
+Current performance: ~5 seconds per image on high-end GPU. Need to get to under 0.5s for practical dataset generation.
+
+## Asset Quality
+
+Garbage in, garbage out. Rendering engine doesn't matter if assets aren't realistic:
+- Material parameters must be measured, not guessed
+- Geometry needs appropriate detail
+- Environments need realistic clutter and weathering
+
+Building an asset library is a parallel effort. More on that next month.

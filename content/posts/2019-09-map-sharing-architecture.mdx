@@ -1,0 +1,110 @@
+---
+title: "Cross-Device Map Sharing: Architecture and Challenges"
+date: "2019-09-16"
+excerpt: "Enabling multiple devices to share spatial maps - the technical architecture for multi-user AR experiences."
+tags: ["Map Sharing", "Multi-User", "Architecture", "Spatial Computing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+For AR to be social, devices must share their understanding of space. My map becomes your map. This is harder than it sounds.
+
+## The Problem
+
+Device A maps a room. Device B enters the same room. For shared experiences:
+- Device B must recognize it's in A's mapped space
+- B must align its coordinate frame to A's
+- Both must track in the same coordinate frame
+- Updates from either device must propagate
+
+## Architecture Options
+
+### Option 1: Cloud-Centric
+All maps stored centrally. Devices query cloud for local maps.
+
+```
+Device A → Upload map → Cloud → Download map → Device B
+```
+
+**Pros**: Single source of truth, easy consistency
+**Cons**: Latency, connectivity dependency, privacy concerns
+
+### Option 2: Peer-to-Peer
+Devices exchange maps directly.
+
+```
+Device A ←→ Direct connection ←→ Device B
+```
+
+**Pros**: No connectivity required, lower latency
+**Cons**: Discovery problem, consistency challenges
+
+### Option 3: Hybrid
+Local sharing when co-located, cloud sync otherwise.
+
+```
+      ┌─── Cloud (sync, backup) ───┐
+      │                            │
+Device A ←── Local when nearby ──→ Device B
+```
+
+**Pros**: Best of both worlds
+**Cons**: Complexity of multiple paths
+
+We're implementing hybrid for V2.
+
+## Map Representation for Sharing
+
+What do we actually share?
+
+**Raw data**: Keyframes, features, point cloud
+- Complete but large (10s of MB per room)
+- Privacy risk (images)
+
+**Sparse map**: 3D landmarks + descriptors
+- Compact (100s of KB)
+- Sufficient for localization
+- Privacy-preserving (no images)
+
+**Anchor-based**: Named spatial anchors
+- Minimal size
+- Limited to anchor locations
+- Easiest privacy model
+
+For localization: sparse maps. For persistent content: anchors.
+
+## Coordinate Frame Alignment
+
+Two devices mapping the same space won't have the same coordinate origin. Alignment needed:
+
+1. **Feature matching**: Find common 3D points visible to both
+2. **Transform estimation**: Compute rigid transform (rotation + translation)
+3. **Verification**: Ensure alignment makes physical sense
+4. **Continuous refinement**: Improve alignment as more common observations arrive
+
+Challenge: when spaces have changed between mappings, alignment may fail or be incorrect.
+
+## Consistency Management
+
+When both devices update the shared map:
+- **Conflict resolution**: Who wins when observations disagree?
+- **Merge strategies**: Combine complementary observations
+- **Version management**: Track what each device has seen
+
+We're implementing eventual consistency with vector clocks for conflict resolution.
+
+## Privacy Architecture
+
+Sharing maps raises privacy concerns:
+- 3D structure reveals room layout
+- Visual features could be matched to photos
+- Location history implicit in map usage
+
+Protections:
+- Explicit sharing consent per map
+- Feature representations that can't reconstruct images
+- Sharing scope controls (public, friends, session-only)
+
+Working on patent for the sharing architecture.
+
+*[Patent granted 2024: US12066545 "Methods and Systems for 3D Map Sharing Between Heterogeneous Computing Systems"]*

@@ -1,0 +1,59 @@
+---
+title: "Optical Design for Depth Cameras: Lens Trade-offs"
+date: "2016-10-20"
+excerpt: "Understanding the optical system design choices for depth sensing - from field of view to distortion to manufacturability."
+tags: ["Optics", "Lens Design", "Depth Sensing", "Hardware", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+A depth camera's optical system is where physics meets product requirements. Every choice involves trade-offs that ripple through the entire system.
+
+## Key Parameters
+
+**Field of View (FOV)**: Wider sees more but reduces angular resolution
+**F-number**: Lower gathers more light but has shallower depth of field
+**Distortion**: Fisheye lenses are compact but complicate calibration
+**MTF**: Modulation Transfer Function determines sharpness at different frequencies
+
+## The Wide-Angle Challenge
+
+MR devices want wide FOV (>90°) to track objects entering from periphery. But wide-angle optics are fundamentally challenging:
+
+**Pixel projection**: A 120° FOV on a 640-pixel sensor means each pixel spans ~0.2°. At 5m range, that's 1.7cm per pixel - terrible depth resolution at range.
+
+**Geometric distortion**: Wide angles require strong barrel distortion or physically large lenses. Distortion can exceed 30% at edges.
+
+**Light falloff**: Illumination falloff follows cos⁴θ - edges receive ~25% of center intensity at 60° off-axis.
+
+**Chromatic aberration**: Harder to correct across wide angles, causing color fringing and depth errors.
+
+## Lens Architectures
+
+### Standard Rectilinear
+Straight lines stay straight. Familiar, but physically large for wide FOV.
+
+### Fisheye (Equidistant/Equisolid)
+Compact, very wide FOV, but strong distortion. Common in VR tracking cameras.
+
+### Freeform
+Computer-optimized surfaces that don't follow standard equations. Can achieve better performance but harder to manufacture and align.
+
+## Depth-Specific Considerations
+
+For ToF: lens must transmit NIR efficiently. Many standard glass types absorb at 940nm.
+
+For structured light: lens NA must match illumination cone. Too narrow = vignetting. Too wide = wasted light.
+
+For stereo: matched distortion between cameras simplifies rectification.
+
+## Manufacturing Reality
+
+The best optical design means nothing if it can't be manufactured at scale. We're learning:
+- **Tolerance sensitivity analysis** early in design
+- **Glass selection** for supply chain availability
+- **Assembly alignment** budget allocation
+
+Our optical engineer's mantra: "The best lens is one that can be built."
+
+Next month: bringing it all together in system architecture.

@@ -1,0 +1,105 @@
+---
+title: "Evaluating Next-Gen Depth Sensors"
+date: "2019-07-22"
+excerpt: "Systematic evaluation of depth sensors for V2 - from datasheets to real-world performance characterization."
+tags: ["Depth Sensing", "Sensor Evaluation", "Hardware", "Testing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+V2 sensor selection is approaching. We have samples from four vendors. Time for rigorous evaluation.
+
+## Evaluation Framework
+
+Datasheets tell one story. Real performance is another. Our evaluation covers:
+
+### Accuracy
+- **Depth error vs range**: Measure at 0.5m, 1m, 2m, 3m, 4m, 5m
+- **Depth error vs angle**: Center vs corners
+- **Systematic bias**: Is error consistent and correctable?
+- **Random noise**: Per-frame variation at static target
+
+### Resolution
+- **Spatial resolution**: Can we resolve 1cm features at 2m?
+- **Depth resolution**: What's the minimum detectable depth difference?
+- **Edge quality**: Sharpness of depth discontinuities
+
+### Robustness
+- **Sunlight immunity**: Performance at 10K, 50K, 100K lux
+- **Multi-path handling**: Corner geometry test
+- **Dynamic range**: Black to white surfaces
+- **Temperature stability**: -10°C to 50°C operating
+
+### System Integration
+- **Power consumption**: Under various operating modes
+- **Latency**: Trigger to data ready
+- **Interface**: USB, MIPI, custom
+- **Calibration**: Factory vs field requirements
+
+## Test Infrastructure
+
+Built a dedicated sensor evaluation lab:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                  Controlled Environment                   │
+│                                                          │
+│  ┌────────────┐      ┌─────────────┐    ┌────────────┐  │
+│  │ Light      │      │ Reference   │    │ Sensor     │  │
+│  │ Sources    │      │ Targets     │    │ Under Test │  │
+│  │ (variable) │      │ (calibrated)│    │            │  │
+│  └────────────┘      └─────────────┘    └────────────┘  │
+│                                                          │
+│  ┌────────────────────────────────────────────────────┐ │
+│  │ Motion Stage (sub-mm repeatability)                │ │
+│  └────────────────────────────────────────────────────┘ │
+│                                                          │
+│  Temperature Chamber: -20°C to 60°C                     │
+└──────────────────────────────────────────────────────────┘
+```
+
+Reference targets:
+- Flat plates at calibrated distances
+- Depth wedge for resolution testing
+- Multi-reflectance chart (5% to 95%)
+- Corner geometry for multi-path
+
+## Preliminary Results
+
+**Sensor A (ToF, indirect)**:
+- Best accuracy (±1% at 2m)
+- Struggles with sunlight above 30K lux
+- Moderate power (400mW)
+- Strong multi-path artifacts
+
+**Sensor B (ToF, direct)**:
+- Good sunlight immunity (works at 80K lux)
+- Higher noise floor
+- High power (700mW)
+- Minimal multi-path
+
+**Sensor C (Structured light)**:
+- Best resolution at close range
+- Fails above 10K lux
+- Low power (250mW)
+- Limited range (3m max)
+
+**Sensor D (Stereo)**:
+- Passive (zero depth-specific power)
+- Resolution depends on texture
+- Struggles with uniform surfaces
+- Good outdoor performance
+
+## Trade-off Analysis
+
+No sensor wins on all dimensions. Priority ranking:
+
+1. **Must have**: Outdoor operation (>50K lux survival)
+2. **Must have**: Range to 4m (room-scale)
+3. **Should have**: Low power (under 500mW)
+4. **Should have**: Resolution for hands (under 5mm at 60cm)
+5. **Nice to have**: Multi-path robustness
+
+Current leader: Sensor B, despite power concerns.
+
+Continued evaluation through August. Final decision in September.

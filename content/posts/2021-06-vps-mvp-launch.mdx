@@ -1,0 +1,96 @@
+---
+title: "VPS MVP Launch: First Real Users"
+date: "2021-06-21"
+excerpt: "Launching the first version of Visual Positioning Service to external developers - what worked, what didn't, and what we learned."
+tags: ["Launch", "VPS", "MVP", "Product", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Today we launched VPS to the first external developers. After a year of building, real users are actually using it.
+
+## What We Launched
+
+**Capabilities:**
+- 6DoF localization in pre-mapped areas
+- Sub-meter accuracy outdoors
+- Integration with Quest Guardian system
+- Developer SDK for building localized experiences
+
+**Coverage:**
+- 50 locations globally (pilot sites)
+- Mix of indoor and outdoor
+- Partners include: museums, campuses, tourist sites
+
+**Limitations:**
+- Limited geographic coverage
+- Requires network connectivity
+- Daytime only (night accuracy poor)
+- Beta stability expectations
+
+## Launch Day Metrics
+
+| Metric | Target | Actual |
+|--------|--------|--------|
+| Localization success | 80% | 73% |
+| Median latency | 500ms | 620ms |
+| Crash rate | Under 0.1% | 0.2% |
+| Power consumption | Under 150mW | 180mW |
+
+Below target on all counts, but within acceptable range for MVP.
+
+## Immediate Feedback
+
+**Positive:**
+- "When it works, it's magic" - developer
+- Accuracy exceeded expectations when successful
+- SDK integration straightforward
+
+**Negative:**
+- "Fails too often in bright sunlight" - developer
+- Latency spikes during high load
+- Unclear failure messaging (why did it fail?)
+
+## First Week Bugs
+
+1. **Memory leak** in feature extraction causing Quest crash after 30 mins
+2. **Race condition** in pose verification causing occasional wrong pose
+3. **Network timeout** handling not graceful (app hung instead of failing)
+4. **Geographic mismatch** - some locations mapped in wrong coordinate system
+
+Fixed 1 and 3 immediately (hotfix). 2 and 4 in next release.
+
+## Learnings
+
+**Testing wasn't enough**: We tested extensively, but real developers found issues in 24 hours that we missed in months.
+
+**Coverage matters more than accuracy**: Developers would rather have 70% success everywhere than 95% in limited areas.
+
+**Failure UX is critical**: When VPS fails, the user experience should be graceful. We didn't invest enough here.
+
+**Latency variability hurts**: Average latency is okay, but p99 latency is terrible. Need to smooth out tail.
+
+## What's Next
+
+**Short-term (1 month):**
+- Bug fixes for top issues
+- Improve failure messaging
+- Reduce latency variability
+
+**Medium-term (3 months):**
+- Expand coverage to 200 locations
+- Improve sunlight robustness
+- Add indoor support
+
+**Long-term (12 months):**
+- Self-serve mapping tools
+- Consumer-ready quality
+- Integration with core Quest experiences
+
+## Celebration and Reality
+
+We shipped. That's worth celebrating.
+
+We shipped something imperfect. That's reality.
+
+The gap between MVP and product is still significant. But you can't cross that gap without launching. Now we iterate with real feedback.

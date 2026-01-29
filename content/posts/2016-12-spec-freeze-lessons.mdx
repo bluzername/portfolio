@@ -1,0 +1,68 @@
+---
+title: "Lessons from Spec Freeze: Hardware-Software Co-Design"
+date: "2016-12-19"
+excerpt: "What I learned from our first major hardware spec freeze - the art of committing to specifications when uncertainty remains."
+tags: ["Hardware", "Specification", "Decision Making", "Leadership", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We've hit spec freeze for the perception system. This means the sensor selections, interfaces, and hardware architecture are locked. Software can still evolve, but the physical substrate is committed.
+
+It's terrifying. And necessary.
+
+## The Spec Freeze Dilemma
+
+Hardware has long lead times:
+- Custom sensor development: 18-24 months
+- ASIC design: 12-18 months
+- Tooling for manufacturing: 6-12 months
+
+Software timelines are:
+- Algorithm improvement: days to weeks
+- Integration: weeks to months
+
+This mismatch creates a fundamental tension. We must freeze hardware while software is still immature.
+
+## What We Committed To
+
+**Depth sensor**: ToF at 320x240, 30Hz, 0.3-5m range
+- Rationale: Better outdoor performance than structured light
+- Risk: Lower resolution may limit hand tracking quality
+
+**Tracking cameras**: Global shutter, 640x480, 60Hz
+- Rationale: Global shutter essential for fast motion
+- Risk: Power consumption higher than rolling shutter
+
+**Processing**: ARM + DSP + custom accelerators
+- Rationale: Best power efficiency for known workloads
+- Risk: Less flexibility than pure GPU approach
+
+## Decision Framework
+
+For each decision:
+1. **Identify irreversibility**: What can't be changed later?
+2. **Quantify uncertainty**: What don't we know?
+3. **Define escape hatches**: What flexibility can we preserve?
+4. **Accept residual risk**: What's the worst case?
+
+## Mistakes I'm Worried About
+
+Being honest with myself:
+- **Depth resolution**: 320x240 may not be enough. Software can compensate somewhat through temporal filtering and super-resolution, but there's a floor.
+- **No dedicated ML accelerator**: Betting we can do most inference on DSP/GPU. If neural networks become central to tracking, we'll be power-constrained.
+- **Eye tracking camera resolution**: Balanced against power, but may limit pupil tracking accuracy in bright conditions.
+
+## Key Learnings
+
+1. **Get algorithms to 80% before freeze**: You need enough fidelity to make informed hardware choices.
+
+2. **Build margins**: Specified 20% power margin, 30% compute margin. We'll use it.
+
+3. **Prototype the risky bets**: Our structured light experiment de-risked the ToF decision.
+
+4. **Document assumptions**: Every spec has underlying assumptions. Write them down. When assumptions change, you know which specs to revisit.
+
+5. **The spec is a contract, not a wish**: If it's in the spec, it's a commitment. Don't spec what you can't deliver.
+
+2017 will be about delivering on these commitments. Onward.

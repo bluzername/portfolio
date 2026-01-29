@@ -1,0 +1,64 @@
+---
+title: "Depth Sensing for MR: ToF vs Structured Light"
+date: "2016-03-20"
+excerpt: "A deep technical comparison of Time-of-Flight and structured light depth sensing approaches for mixed reality applications."
+tags: ["Depth Sensing", "ToF", "Structured Light", "Computer Vision", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Depth sensing is the foundation of spatial computing. Without accurate, real-time depth data, you can't place virtual objects on real surfaces, detect collisions, or enable hand tracking. This month I've been deep in the evaluation of depth sensing technologies.
+
+## Time-of-Flight (ToF) Basics
+
+ToF sensors measure the time it takes for light to travel to a surface and back:
+
+```
+Distance = (Speed of Light × Time) / 2
+```
+
+In practice, we use phase detection rather than direct time measurement. The sensor emits modulated IR light and measures the phase shift of the returned signal.
+
+**Advantages:**
+- Works at any distance within range
+- Provides full-frame depth in a single shot
+- Relatively simple calibration
+
+**Challenges:**
+- Multi-path interference in complex scenes
+- Flying pixels at depth discontinuities
+- Power consumption scales with range
+
+## Structured Light
+
+Structured light projects a known IR pattern and uses triangulation to compute depth from pattern deformation.
+
+**Advantages:**
+- Higher accuracy at close range
+- Better at sharp depth edges
+- Can achieve very high resolution
+
+**Challenges:**
+- Accuracy degrades with distance (baseline-limited)
+- Struggles with textureless surfaces
+- Ambient IR interference (sunlight)
+
+## The MR Trade-off
+
+For MR headsets, we need:
+- **Indoor range**: 0.3m - 5m
+- **Outdoor capability**: Must handle sunlight
+- **Power budget**: under 500mW for the depth subsystem
+- **Latency**: under 20ms for responsive interaction
+
+Neither technology is perfect. ToF wins on outdoor robustness and consistent accuracy across distances. Structured light wins on close-range precision for hand tracking.
+
+## Hybrid Approaches
+
+The most promising path forward may be hybrid systems:
+- ToF for room-scale understanding and SLAM
+- Structured light for near-field hand tracking
+
+The integration complexity is significant - different sensors, different calibrations, different failure modes. But the combination could provide the best of both worlds.
+
+Next month: sensor fusion and how to combine these modalities without doubling power consumption.

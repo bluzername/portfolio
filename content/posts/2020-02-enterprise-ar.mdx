@@ -1,0 +1,104 @@
+---
+title: "Enterprise AR: Different Requirements, Different Priorities"
+date: "2020-02-17"
+excerpt: "What changes when AR targets enterprise instead of consumer - reliability, integration, and the perception implications."
+tags: ["Enterprise", "AR", "Requirements", "Product", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Magic Leap is pivoting toward enterprise. The perception requirements shift in interesting ways.
+
+## Consumer vs Enterprise
+
+**Consumer priorities:**
+1. Price (must be affordable)
+2. Form factor (must be wearable socially)
+3. Content (must have compelling experiences)
+4. Ease of use (must work out of box)
+
+**Enterprise priorities:**
+1. Reliability (must work every time)
+2. Integration (must connect to existing systems)
+3. ROI (must save more than it costs)
+4. Support (must have escalation path)
+
+Perception implications differ significantly.
+
+## Reliability Requirements
+
+Enterprise: "If the tracking fails during a surgical procedure, that's not acceptable."
+
+Consumer tolerance: under 1% tracking loss per hour
+Enterprise requirement: under 0.01% tracking loss per hour
+
+How do we achieve this?
+- **Controlled environments**: Enterprise can mandate good lighting, no clutter
+- **Custom calibration**: On-site calibration for specific spaces
+- **Redundancy**: Multiple sensor modalities, failover paths
+- **Monitoring**: Real-time health dashboards, predictive maintenance
+
+## Integration Requirements
+
+Enterprise systems don't exist in isolation:
+- **CAD integration**: Overlay 3D models from existing design tools
+- **IoT integration**: Visualize data from sensors, machines, systems
+- **Backend integration**: Connect to enterprise databases, workflows
+- **Authentication**: Integrate with corporate identity management
+
+Perception implications:
+- Fiducial markers for CAD alignment
+- QR codes for object identification
+- Consistent coordinate systems across visits
+
+## Environment Considerations
+
+Enterprise environments differ from homes:
+
+**Factories**:
+- Harsh lighting (bright overheads, shadows)
+- Metal surfaces (reflections, multi-path)
+- Dynamic scenes (machinery, people moving)
+- Hazardous areas (can't touch walls for mapping)
+
+**Healthcare**:
+- Sterile requirements (no touching surfaces)
+- Variable lighting (procedure lights)
+- Moving people (medical staff)
+- Regulatory constraints (HIPAA, etc.)
+
+**Field service**:
+- Outdoor operation (sunlight, weather)
+- Variable locations (customer sites)
+- Connectivity constraints (no cloud assumption)
+
+Each vertical needs perception adaptations.
+
+## Perception Customization
+
+One size doesn't fit all. We're building:
+
+**Environment profiles**: Preset configurations for common scenarios
+- "Clean room mode": High-frequency lighting handling
+- "Outdoor mode": Sunlight-robust algorithms
+- "Dynamic mode": Fast adaptation to scene changes
+
+**Calibration tools**: Enterprise IT can calibrate for their specific spaces
+- Site survey workflow
+- Persistent map management
+- Quality verification
+
+**API access**: Enterprises want deeper integration
+- Raw sensor access (with consent)
+- Custom tracking algorithms (with support)
+- Data export for analytics
+
+## Business Model Impact
+
+Enterprise changes the perception team's work:
+- Longer support timelines (years, not months)
+- Customer-specific bug fixes
+- On-site deployment support
+- Certification requirements (ISO, medical, etc.)
+
+It's a different rhythm than consumer product development. Adjusting.

@@ -1,0 +1,99 @@
+---
+title: "Real-Time 3D Reconstruction: Meshing at Interactive Rates"
+date: "2019-04-15"
+excerpt: "Advances in spatial mapping for V2 - dense reconstruction, mesh quality, and the compute challenge of real-time 3D."
+tags: ["3D Reconstruction", "Meshing", "SLAM", "Spatial Computing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+V1's spatial mapping was good enough for plane detection. V2 needs dense, accurate meshes for realistic occlusion and physics.
+
+## V1 Limitations
+
+Current meshing:
+- Resolution: ~5cm voxels
+- Update rate: Full mesh every 2-3 seconds
+- Hole filling: Minimal
+- Surface quality: Blocky, noisy
+
+For V2, we need:
+- Resolution: 1-2cm
+- Update rate: Incremental, sub-second
+- Hole filling: Intelligent completion
+- Surface quality: Smooth, watertight
+
+## Reconstruction Pipeline
+
+```
+Depth Frames → Depth Filtering → TSDF Integration →
+Mesh Extraction → Mesh Simplification → Collision Mesh
+```
+
+### Depth Filtering
+Raw depth has holes and noise. Filter before integration:
+- Bilateral filtering (edge-preserving smoothing)
+- Temporal averaging (accumulate confidence)
+- Outlier rejection (statistical filtering)
+
+### TSDF Integration
+Truncated Signed Distance Function - implicit surface representation:
+- Voxel grid stores distance to nearest surface
+- New depth frames update distances via running average
+- Memory-efficient: only store near-surface voxels
+
+V1: Dense voxel array, 5cm resolution, limited volume
+V2: Sparse voxel structures (octree or hash), 1cm resolution, room-scale
+
+### Mesh Extraction
+Marching cubes extracts triangle mesh from TSDF:
+- Classic algorithm, well-understood
+- Parallelizable (per-voxel)
+- Mesh complexity proportional to surface area, not volume
+
+### Mesh Simplification
+Raw marching cubes produces too many triangles. Simplify:
+- Quadric error metrics for vertex decimation
+- Preserve sharp edges and features
+- Target triangle budget for rendering
+
+## GPU Acceleration
+
+Reconstruction is embarrassingly parallel:
+- Each depth pixel updates independent voxels
+- Each voxel processes independently
+- Marching cubes per-voxel
+
+V1: CPU implementation (slow, eats power)
+V2: GPU compute pipeline
+
+Expected improvement: 10x throughput at similar power.
+
+## Learned Completion
+
+Depth sensors don't see everything (occlusions, range limits, specular surfaces). Can we complete what's missing?
+
+Approaches:
+- **Geometric priors**: Planes extend, rooms have floors/ceilings
+- **Learned completion**: Neural network predicts unobserved geometry
+- **Semantic reasoning**: If it's a chair, it probably has four legs
+
+We're prototyping learned completion:
+- Train on complete 3D models
+- Input: partial observation
+- Output: completed mesh
+
+Early results promising for common objects. Generalization to arbitrary scenes is harder.
+
+## Memory Management
+
+Room-scale at 1cm resolution = billions of voxels if dense.
+
+Solutions:
+- **Hierarchical structures**: Only subdivide where needed
+- **LRU caching**: Keep recent observations, page out old areas
+- **Level-of-detail**: High resolution near user, coarse far away
+
+Memory budget: 500MB for reconstruction.
+
+Target: kitchen-sized space at 1cm with dynamic updates.

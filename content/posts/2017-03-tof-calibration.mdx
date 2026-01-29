@@ -1,0 +1,80 @@
+---
+title: "ToF Depth Calibration: Beyond the Datasheet"
+date: "2017-03-14"
+excerpt: "The hidden complexities of calibrating Time-of-Flight depth sensors for accuracy across temperature, distance, and reflectivity."
+tags: ["ToF", "Calibration", "Depth Sensing", "Sensors", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Time-of-Flight sensors promise simple depth measurement: emit light, measure return time, compute distance. Reality is far messier.
+
+## Sources of ToF Error
+
+**Systematic errors** (predictable, correctable):
+- Phase non-linearity in demodulation
+- Integration time effects
+- Temperature-dependent delays
+- Lens distortion
+
+**Scene-dependent errors** (harder to correct):
+- Multi-path interference (light bouncing off multiple surfaces)
+- Mixed pixels at depth edges
+- Reflectivity-dependent bias
+- Motion artifacts
+
+**Random errors** (noise floor):
+- Photon shot noise
+- Sensor read noise
+- Quantization
+
+## The Calibration Challenge
+
+We need to characterize and correct systematic errors while understanding the limits imposed by scene-dependent and random errors.
+
+### Distance Calibration
+
+Use a flat target at known distances (0.5m, 1m, 2m, 3m, 4m, 5m). At each distance:
+1. Measure reported depth across the FOV
+2. Compare to ground truth
+3. Fit correction polynomial or lookup table
+
+But: correction depends on integration time, modulation frequency, and temperature. Full characterization requires a 4D calibration space.
+
+### Temperature Calibration
+
+ToF sensors drift with temperature - electronic delays change, and optical components shift.
+
+Our approach:
+1. Calibrate at multiple temperatures (15°C, 25°C, 35°C, 45°C)
+2. Fit thermal model for each calibration parameter
+3. Monitor device temperature in operation
+4. Apply temperature-compensated correction
+
+### Reflectivity Compensation
+
+Low-reflectivity surfaces (dark materials) return less light, causing:
+- Higher noise
+- Potential bias (fewer photons = different systematic errors)
+
+We're building a calibration target set with controlled reflectivity patches (5%, 20%, 50%, 90%) to characterize this relationship.
+
+## Multi-Path Mitigation
+
+The hardest problem. When light bounces off multiple surfaces before returning to the sensor, the measured phase is a weighted average - neither distance is correct.
+
+Approaches we're exploring:
+- Multi-frequency ToF (different wavelengths separate direct/indirect)
+- Spatial coding (structured illumination patterns)
+- Learning-based correction (train on sim data with known multi-path)
+
+None are perfect. Multi-path may remain a fundamental limitation.
+
+## Calibration Data Management
+
+Each device has hundreds of calibration parameters. Managing this:
+- Unique device ID → calibration record
+- Versioned calibration algorithms
+- Traceability from field issue to factory data
+
+Building this infrastructure now saves enormous pain later.

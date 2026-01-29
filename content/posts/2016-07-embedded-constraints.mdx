@@ -1,0 +1,57 @@
+---
+title: "Perception on Embedded: Power, Thermal, and Compute Constraints"
+date: "2016-07-25"
+excerpt: "The brutal realities of running computer vision algorithms on wearable hardware - where every milliwatt counts."
+tags: ["Embedded Systems", "Optimization", "Power", "Hardware", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+On a server, you optimize for accuracy. On a headset worn on someone's face, you optimize for not burning them.
+
+## The Constraint Triangle
+
+**Power**: Total budget ~5-8W for the entire system (display, compute, sensors, wireless). Perception might get 1-2W.
+
+**Thermal**: The device sits on your face. Surface temperature >41°C causes discomfort. >45°C is a safety issue.
+
+**Latency**: Motion-to-photon must be under 20ms to avoid nausea. Perception is in the critical path.
+
+These constraints are interconnected. Running faster uses more power, generates more heat, throttles the processor, increases latency.
+
+## Algorithm Implications
+
+Algorithms that work beautifully on a desktop GPU may be completely impractical:
+
+### Feature Detection
+SIFT: 200ms per frame → Unusable
+ORB: 15ms per frame → Marginal
+Custom binary descriptors: 3ms → Feasible
+
+### Depth Processing
+Full frame bilateral filter: 25ms → Too slow
+Sparse depth + interpolation: 5ms → Workable
+
+### SLAM Backend
+Full bundle adjustment: 500ms → Background only
+Sliding window: 30ms → Near real-time
+
+## Hardware Acceleration
+
+We can't solve this with algorithms alone. Hardware acceleration is essential:
+
+**DSP**: Good for fixed-function pipelines (filtering, feature detection)
+**GPU**: Good for parallel workloads (stereo matching, neural networks)
+**Custom silicon**: Best efficiency but longest development time
+
+The architecture decision we make now will determine what's possible for the next 5 years.
+
+## The Profiling Discipline
+
+Every engineer on the perception team needs to internalize:
+1. Profile before optimizing
+2. Measure power, not just time
+3. Test on target hardware, not desktop
+4. Consider thermal over sustained workloads, not just peak
+
+We're building profiling infrastructure to make this easy. A topic for next month.

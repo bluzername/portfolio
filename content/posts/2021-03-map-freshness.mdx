@@ -1,0 +1,104 @@
+---
+title: "Keeping Maps Fresh: The Temporal Challenge"
+date: "2021-03-22"
+excerpt: "Maps go stale as the world changes. Strategies for detecting and handling changes in visual positioning."
+tags: ["Mapping", "Change Detection", "Maintenance", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+The world changes. New buildings appear, old ones are demolished. Stores rebrand, signs get updated. Seasons cycle. Our maps must keep up.
+
+## The Staleness Problem
+
+Map captured: January 2021
+User queries: December 2021
+
+In between:
+- Construction changed building facade
+- Seasonal foliage blocked features
+- Street furniture was moved
+- Business signs updated
+
+If >30% of features changed, localization may fail.
+
+## Change Detection
+
+### Query-Time Detection
+When user query doesn't match map well:
+- Low inlier ratio → something changed
+- Inconsistent matches → partial changes
+- High reprojection error → systematic shift
+
+Can detect but not fix during query.
+
+### Proactive Monitoring
+Periodic re-capture or user contribution:
+- Schedule re-capture for high-value areas
+- Collect user images (with consent) as passive monitoring
+- Compare new captures to existing map
+
+### Automated Analysis
+Detect changes without ground truth:
+- Feature stability: Which features persist across time?
+- Semantic consistency: Building still looks like building?
+- Geometric consistency: Structure matches expected?
+
+## Handling Changes
+
+### Graceful Degradation
+When map is stale:
+- Return lower confidence score
+- Fall back to GPS if confidence too low
+- Suggest user contribute updated imagery
+
+### Multi-Temporal Maps
+Store multiple versions:
+- Seasonal variants (winter vs summer)
+- Time-of-day variants (day vs night)
+- Historical versions for change tracking
+
+Query matches against appropriate variant.
+
+### Continuous Refinement
+Update maps incrementally:
+- New observations refine existing structure
+- Change detection triggers re-mapping
+- Automated quality checks before publishing
+
+## Economic Considerations
+
+Re-mapping isn't free:
+- Capture cost (vehicles, people, storage)
+- Processing cost (compute for SfM/MVS)
+- Validation cost (QA, review)
+
+Prioritization strategy:
+- High-traffic areas updated frequently
+- Popular AR experience locations prioritized
+- User-reported staleness triggers review
+- Budget allocation by expected value
+
+## The Seasonal Challenge
+
+Seasonal changes are predictable but dramatic:
+- Deciduous trees: Full foliage → bare branches
+- Snow cover: Completely changes appearance
+- Sun angle: Different shadows throughout year
+
+Options:
+- Seasonal map variants (expensive, multiplies storage)
+- Season-invariant features (research direction)
+- Semantic matching (match building, not texture)
+
+Currently exploring season-invariant feature learning.
+
+## Success Metrics
+
+Tracking freshness:
+- Map age distribution (how old are our maps?)
+- Change rate by area (how fast do different regions change?)
+- Localization success vs map age (correlation?)
+- User-reported staleness incidents
+
+Target: under 5% of queries affected by stale maps.

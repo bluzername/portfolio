@@ -1,0 +1,103 @@
+---
+title: "Scaling Mapping Operations"
+date: "2021-07-19"
+excerpt: "From 50 to 500 mapped locations - the operational challenges of scaling 3D mapping worldwide."
+tags: ["Mapping", "Operations", "Scale", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+VPS MVP launched with 50 locations. The roadmap calls for 500 by year end. That's a 10x scaling challenge.
+
+## The Mapping Pipeline
+
+For each location:
+1. **Site survey** - Identify mapping area, access, timing
+2. **Capture** - Collect imagery with calibrated equipment
+3. **Processing** - Run SfM/MVS to create 3D map
+4. **QA** - Verify accuracy, completeness, safety
+5. **Publishing** - Make available to VPS queries
+6. **Maintenance** - Monitor and update as needed
+
+Each step has scaling bottlenecks.
+
+## Capture Scaling
+
+**Current state**: In-house teams with specialized equipment
+- Cost: $5,000+ per location
+- Time: 1-2 days per location
+- Capacity: 10 locations/month
+
+**Scaled approach**: Partner network + consumer devices
+- Mapping partners in multiple countries
+- Lower-cost capture equipment
+- Crowdsourced supplementary imagery
+- Target: $500 per location, 100+ locations/month
+
+## Processing Scaling
+
+**Current state**: Manual pipeline with expert oversight
+- Processing time: 2-3 days per location
+- Human review: 4 hours per location
+- Failure rate: 20% require manual intervention
+
+**Scaled approach**: Automated pipeline with exception handling
+- Processing time: 8 hours (faster hardware, optimized code)
+- Human review: 30 minutes (only exceptions)
+- Failure rate: 5% require intervention (better preprocessing)
+
+## QA Scaling
+
+Quality checks:
+- **Geometric accuracy**: Does map match reality?
+- **Completeness**: Are all important areas covered?
+- **Safety**: Are there inappropriate elements?
+- **Consistency**: Does it integrate with adjacent maps?
+
+**Current**: Manual review of all outputs
+**Scaled**: Automated checks + sampling review
+
+Automated checks catch 90% of issues. Human review for remaining risk.
+
+## Geographic Prioritization
+
+Can't map everywhere immediately. Prioritization:
+1. **Developer demand**: Where do partners want to build?
+2. **User density**: Where are Quest users?
+3. **Strategic locations**: Landmarks, venues, campuses
+4. **Capture efficiency**: Clustered locations cheaper than scattered
+
+Interactive prioritization dashboard for business decisions.
+
+## Operational Metrics
+
+Tracking:
+- **Coverage velocity**: Locations/month
+- **Cost efficiency**: $/location
+- **Quality rate**: % passing QA first time
+- **Time to publish**: Capture to live
+- **Partner performance**: Quality and speed by partner
+
+Weekly operational reviews drive improvements.
+
+## The Chicken-and-Egg Problem
+
+Developers want coverage before building.
+We want demand before expanding coverage.
+
+Resolution:
+- Seed coverage in strategic areas
+- Committed partnerships in covered areas
+- Demonstrate value to attract more developers
+- Developer demand drives expansion
+
+Breaking the cycle requires upfront investment in coverage.
+
+## Lessons from Month 1 of Scaling
+
+- Partner training takes longer than expected
+- Local regulations vary significantly by country
+- Weather windows are real constraints
+- Quality consistency across partners is challenging
+
+Building robust processes before scale is essential.

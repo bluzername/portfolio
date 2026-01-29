@@ -1,0 +1,128 @@
+---
+title: "Building a Perception Testing Framework"
+date: "2020-01-20"
+excerpt: "Systematic testing infrastructure for perception systems - from unit tests to integration tests to field validation."
+tags: ["Testing", "Quality", "Infrastructure", "Perception", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Perception systems are notoriously hard to test. Inputs are high-dimensional (images, depth maps), outputs are continuous (poses, keypoints), and "correct" often means "good enough." Here's how we built a testing framework.
+
+## Testing Pyramid for Perception
+
+```
+            /\
+           /  \  Field Validation
+          /    \  (real users, real environments)
+         /──────\
+        /        \ System Tests
+       /          \ (full pipeline, recorded data)
+      /────────────\
+     /              \ Integration Tests
+    /                \ (component boundaries)
+   /──────────────────\
+  /                    \ Unit Tests
+ /                      \ (individual functions)
+/────────────────────────\
+```
+
+Each level catches different bugs. All are necessary.
+
+## Unit Tests
+
+Testing individual functions:
+- Feature detector: given image patch, detect correct corners
+- Depth filter: given noisy depth, produce filtered depth
+- Pose optimizer: given constraints, find optimal pose
+
+Challenges:
+- Floating point comparisons need tolerances
+- Random initialization needs seeded tests
+- Performance tests (not just correctness)
+
+We have 2,000+ unit tests. Run on every commit.
+
+## Integration Tests
+
+Testing component boundaries:
+- Camera driver delivers images to feature extractor
+- Feature extractor feeds SLAM
+- SLAM updates pose service
+
+Mock dependencies, test data flow and error handling.
+
+Key integration points we test:
+- Sensor to algorithm handoff
+- Algorithm to algorithm handoff
+- Algorithm to API surface
+
+## System Tests
+
+Full pipeline on recorded data:
+
+**Regression datasets**: Collection of challenging sequences
+- Low light sequences
+- Fast motion sequences
+- Dynamic scene sequences
+- Multi-room sequences
+
+**Ground truth**: Motion capture or surveyed markers provide reference.
+
+**Metrics**:
+- Absolute Trajectory Error (ATE)
+- Relative Pose Error (RPE)
+- Tracking loss events
+- Feature count over time
+
+Automated dashboard tracks metrics across commits. Regressions block merge.
+
+## Field Validation
+
+Real devices in real environments:
+- Beta users with instrumented builds
+- Telemetry aggregation
+- Failure classification
+
+Field validation catches what lab testing misses:
+- Edge cases we didn't imagine
+- Environmental factors we don't control
+- User behaviors we didn't anticipate
+
+## Synthetic Test Generation
+
+Can we generate tests automatically?
+
+**Fuzz testing**: Random inputs to find crashes
+- Random images → feature detector (should never crash)
+- Random depths → mesh builder (should handle gracefully)
+
+**Property-based testing**: Define invariants, generate test cases
+- Tracking should be consistent: forward then backward = original pose
+- Depth filtering should not increase noise
+- Pose optimization should decrease error
+
+## Flaky Tests
+
+Perception tests are often flaky:
+- Numerical precision varies across platforms
+- Multi-threaded code has race conditions
+- Random initialization causes variance
+
+Solutions:
+- Deterministic random seeds
+- Tolerance-based comparisons
+- Retry with logging on failure
+- Quarantine persistently flaky tests
+
+Current flake rate: 0.3% (down from 5% a year ago).
+
+## CI/CD Integration
+
+Test execution is automated:
+- Commit → Unit tests (2 min)
+- PR → Unit + Integration (15 min)
+- Merge → Full system tests (2 hours)
+- Daily → Extended regression (8 hours)
+
+No human should need to run tests manually for routine development.

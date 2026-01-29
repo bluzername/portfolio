@@ -1,0 +1,88 @@
+---
+title: "Simulation as Essential Infrastructure During Lockdown"
+date: "2020-04-20"
+excerpt: "With lab access limited, simulation becomes even more critical - accelerating our investment in virtual engineering."
+tags: ["Simulation", "Synthetic Data", "Virtual Engineering", "COVID", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Silver lining of the pandemic: simulation investment that seemed "nice to have" is now essential. We can't access labs, but we can access simulated labs.
+
+## The Lockdown Acceleration
+
+Before March 2020:
+- Simulation supplemented physical testing
+- Real data collection was primary
+- Hardware prototyping happened in labs
+
+After March 2020:
+- Simulation must substitute for physical testing
+- Synthetic data is often the only option
+- Hardware simulation enables progress without labs
+
+## Virtual Engineering Expansion
+
+We've expanded simulation beyond training data:
+
+### Sensor Prototyping
+Before: Build prototype sensor, test, iterate.
+Now: Simulate sensor characteristics, predict performance, iterate in simulation.
+
+Simulating:
+- Optical path (ray tracing through lens systems)
+- Sensor response (photon-to-electron conversion, noise models)
+- Processing pipeline (depth estimation, feature extraction)
+
+Result: Can evaluate sensor design changes in hours, not months.
+
+### System Integration
+Before: Integrate components on bench, find issues, debug.
+Now: Simulate integrated system, predict issues, fix before hardware exists.
+
+Simulating:
+- Timing interactions between sensors
+- Data flow bottlenecks
+- Failure mode propagation
+
+### Performance Prediction
+Before: Profile on target hardware.
+Now: Cycle-accurate simulation of target processors.
+
+Not perfect, but good enough to catch major issues before silicon.
+
+## Infrastructure Investments
+
+Accelerated investments:
+- **Render farm capacity**: 3x increase in cloud GPU allocation
+- **Physics simulation**: License expansion for optical simulation tools
+- **Asset library**: More 3D environments, objects, materials
+- **Automation**: Better job scheduling, monitoring, analysis
+
+## Limitations We're Hitting
+
+Simulation isn't magic:
+
+**Fidelity ceiling**: No matter how good the simulation, reality surprises.
+
+**Validation gap**: How do you validate a simulation without access to the real thing?
+
+**Tacit knowledge**: Some debugging intuition only comes from physical experience.
+
+**Human factors**: Can't simulate the experience of wearing the device.
+
+## Hybrid Workflow
+
+When we do get lab access (limited, scheduled):
+1. Prioritize validation: Use physical testing to validate simulation predictions
+2. Collect calibration data: Improve simulation fidelity with real measurements
+3. Edge case exploration: Investigate things simulation couldn't predict
+
+## Future State
+
+Post-pandemic, we won't go back to pure physical development:
+- Simulation-first for early design phases
+- Physical validation for maturity milestones
+- Continuous refinement of simulation accuracy
+
+The pandemic forced an evolution we should have made anyway. Virtual engineering is now core to our process.

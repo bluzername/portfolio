@@ -1,0 +1,65 @@
+---
+title: "Sensor Fusion Architecture for Spatial Perception"
+date: "2016-05-22"
+excerpt: "Designing a unified sensor fusion pipeline that combines cameras, depth sensors, and IMUs into a coherent spatial understanding system."
+tags: ["Sensor Fusion", "Computer Vision", "IMU", "Architecture", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Individual sensors lie. Cameras are fooled by lighting changes, IMUs drift, depth sensors have holes. The art of spatial perception is fusing these imperfect sources into something reliable.
+
+## The Fusion Challenge
+
+Our headset will have:
+- Multiple RGB cameras (wide and narrow FOV)
+- Depth sensor (ToF or structured light)
+- IMU (accelerometer + gyroscope)
+- Magnetometer
+- Potentially: eye cameras, hand tracking cameras
+
+Each sensor has different:
+- **Sample rates**: IMU at 1kHz, cameras at 30-60Hz, depth at 30Hz
+- **Latencies**: Camera processing takes 10-30ms, IMU is nearly instant
+- **Failure modes**: Depth fails in sunlight, cameras fail in darkness, IMU drifts always
+
+## Fusion Approaches
+
+### Extended Kalman Filter (EKF)
+Classical approach: maintain a state estimate (pose, velocity, biases) and update with each sensor measurement.
+
+```
+Predict: x̂ₖ = f(x̂ₖ₋₁, uₖ)
+Update: x̂ₖ = x̂ₖ + K(zₖ - h(x̂ₖ))
+```
+
+**Pros**: Well understood, computationally efficient
+**Cons**: Linearization errors, can't handle multi-modal distributions
+
+### Factor Graph Optimization
+Model the problem as a graph where nodes are states and edges are constraints from measurements. Solve via nonlinear least squares.
+
+**Pros**: Can incorporate any measurement type, handles loop closures naturally
+**Cons**: Computationally expensive, requires careful marginalization
+
+### Our Hybrid Approach
+
+We're converging on a hybrid architecture:
+1. **Tight VIO core** using IMU + cameras with EKF for low-latency tracking
+2. **Sliding window optimization** refining recent poses
+3. **Factor graph backend** for map maintenance and loop closure
+
+## Time Synchronization
+
+The hidden complexity: every sensor has different latency. If we naively fuse IMU data with camera data, we're comparing measurements from different moments in time.
+
+Solutions:
+- Hardware trigger synchronization
+- Timestamping at sensor level
+- Interpolation and extrapolation in fusion
+
+Getting this wrong by even 10ms causes noticeable instability in AR. We're learning this the hard way.
+
+## Next Steps
+
+Building a simulation environment to test fusion algorithms before hardware is ready. More on that next month.

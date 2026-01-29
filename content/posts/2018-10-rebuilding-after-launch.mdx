@@ -1,0 +1,96 @@
+---
+title: "Rebuilding After Launch: Technical Debt and Fresh Starts"
+date: "2018-10-22"
+excerpt: "After shipping under pressure, it's time to address the technical debt we accumulated - deciding what to fix, what to rewrite, and what to accept."
+tags: ["Technical Debt", "Engineering", "Architecture", "Refactoring", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We shipped. The fires are mostly out. Now we face the pile of IOUs we wrote to ourselves during crunch.
+
+## The Debt Inventory
+
+Types of technical debt we accumulated:
+
+**Expedient hacks**: Code that solves the immediate problem poorly
+- "Magic numbers" tuned for specific hardware units
+- Race conditions "fixed" with sleep statements
+- Error handling that ignores errors
+
+**Missing infrastructure**: Things we should have built but skipped
+- Automated integration tests
+- Performance regression tracking
+- Comprehensive logging
+
+**Architecture mismatches**: Designs that don't fit requirements
+- Synchronous APIs that should be async
+- Components with circular dependencies
+- Abstractions at wrong level
+
+## The Prioritization Framework
+
+Not all debt is equal. Prioritize by:
+
+**Pain**: How much does it slow us down?
+- Blocks new features
+- Causes recurring bugs
+- Requires workarounds
+
+**Risk**: What's the worst case if we don't fix it?
+- Customer-visible failures
+- Security vulnerabilities
+- Data corruption
+
+**Cost**: How hard is it to fix?
+- Isolated vs integrated
+- Clear vs murky scope
+- Documentation exists vs reverse engineering
+
+## What We're Tackling
+
+**Q4 priorities:**
+
+1. **Tracking system integration tests**: We've had three regressions from changes in one component breaking another. Need automated catch.
+
+2. **Sensor driver rewrite**: The depth sensor driver was written under time pressure. It works but is fragile. Rewriting with proper error handling and documentation.
+
+3. **Calibration data management**: We have calibration parameters scattered across files, database, and firmware. Consolidating into single source of truth.
+
+## What We're Not Fixing
+
+Some debt isn't worth paying:
+
+**Stable bad code**: If it works and we don't need to change it, leave it alone.
+
+**Soon-to-be-obsolete**: V2 will have different sensors. Don't polish V1 code that won't carry forward.
+
+**Learning-in-progress**: Some "debt" is actually exploratory code. Rewriting now might be premature.
+
+## The Rewrite Temptation
+
+Post-launch, there's always pressure to "do it right this time" - full rewrite, clean architecture, new tech stack.
+
+I'm pushing back:
+- Rewrites take 2x as long as estimated
+- You lose institutional knowledge encoded in old code
+- New code has new bugs
+
+Prefer incremental improvement:
+- Replace one component at a time
+- Keep interfaces stable
+- Run old and new in parallel during transition
+
+## Debt Prevention
+
+More important than paying debt is not accumulating it:
+
+**Time-boxed debt**: "This hack is okay for 2 weeks" with a calendar reminder.
+
+**Debt tracking**: Log every shortcut with justification and cleanup plan.
+
+**Review standards**: Don't approve PRs that add untracked debt.
+
+**Buffer in planning**: 20% of sprint capacity for debt reduction.
+
+We're building the muscle to stay ahead. It's not glamorous, but it's how you maintain velocity over years.

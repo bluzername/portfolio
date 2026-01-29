@@ -1,0 +1,87 @@
+---
+title: "Neural Networks on Embedded: The Optimization Journey"
+date: "2018-02-19"
+excerpt: "Deploying neural networks on power-constrained hardware - quantization, pruning, architecture search, and the gap between research and production."
+tags: ["Deep Learning", "Optimization", "Embedded Systems", "Neural Networks", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+A hand tracking model that achieves state-of-the-art accuracy on a GPU server means nothing if it can't run on a headset. Bridging this gap is the work.
+
+## The Constraints
+
+Our compute budget for hand tracking:
+- **Latency**: under 15ms end-to-end
+- **Power**: under 200mW average
+- **Memory**: under 50MB model size
+- **Hardware**: ARM CPU + DSP + limited GPU
+
+A typical research model: 50M parameters, 10B FLOPs, 100ms inference on mobile GPU.
+
+We need 100x improvement.
+
+## Optimization Strategies
+
+### Architecture Efficiency
+
+Start with an efficient architecture:
+- **MobileNet-style depthwise separable convolutions**: 8-9x fewer operations than standard conv
+- **EfficientNet compound scaling**: Balanced depth/width/resolution
+- **Inverted residuals**: Expand-depthwise-project pattern
+
+We've moved from ResNet-50 (25M params) to a custom architecture (800K params) with similar accuracy.
+
+### Quantization
+
+Moving from FP32 to INT8:
+- 4x memory reduction
+- 2-4x speedup on DSP/NPU
+- ~1% accuracy loss if done carefully
+
+Key techniques:
+- **Post-training quantization**: Quick but accuracy loss
+- **Quantization-aware training**: Train with quantization in the loop, better accuracy
+- **Mixed precision**: Keep sensitive layers in higher precision
+
+We use quantization-aware training with INT8 weights and activations.
+
+### Pruning
+
+Remove unnecessary parameters:
+- **Structured pruning**: Remove entire filters/channels (hardware-friendly)
+- **Unstructured pruning**: Remove individual weights (high sparsity but sparse ops less supported)
+
+We achieve 50% structured sparsity with under 2% accuracy drop.
+
+### Knowledge Distillation
+
+Train small model to mimic large model:
+```
+Loss = α × TaskLoss + (1-α) × DistillationLoss
+```
+
+The large "teacher" model provides softer targets that transfer more information than hard labels.
+
+5-10% accuracy improvement over training small model directly.
+
+## The Deployment Stack
+
+```
+PyTorch Model → ONNX Export → Target Compiler →
+Optimized Kernels → Runtime Inference
+```
+
+Each step can introduce errors or performance regressions. Need automated testing at each stage.
+
+## Lessons Learned
+
+1. **Design for deployment from the start**: Retrofitting efficiency into a research model is painful. Constraints should inform architecture.
+
+2. **Profile on target hardware**: Desktop GPU profiling doesn't predict DSP performance. Always measure on actual silicon.
+
+3. **Accuracy vs latency curves**: Know where you are on this curve. Sometimes 5% accuracy is worth 2x speed.
+
+4. **Beware the long tail**: Average performance doesn't capture worst-case. Some inputs may take 3x longer.
+
+Current status: 12ms inference on target hardware. Within budget, but no margin.

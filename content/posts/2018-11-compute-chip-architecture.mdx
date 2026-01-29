@@ -1,0 +1,89 @@
+---
+title: "Architecting Compute Silicon for Perception Workloads"
+date: "2018-11-19"
+excerpt: "Influencing next-generation compute chip architecture for perception - what hardware do SLAM, depth processing, and ML inference actually need?"
+tags: ["Chip Architecture", "Hardware", "Perception", "Computing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We're starting to influence the compute architecture for future devices. What does perception actually need from silicon?
+
+## Current Limitations
+
+On the current chip (mobile SoC + custom accelerators):
+- CPU handles control flow and fusion
+- DSP runs feature extraction and filtering
+- GPU runs ML inference (slowly)
+- Custom blocks handle specific functions
+
+Pain points:
+- Data movement between units burns power
+- Memory bandwidth is the bottleneck
+- GPU inference is power-hungry for small models
+- Fixed-function blocks lack flexibility
+
+## Perception Workload Analysis
+
+Breaking down where cycles go:
+
+| Workload | % Compute | Characteristics |
+|----------|-----------|-----------------|
+| Feature extraction | 25% | Parallel, local ops |
+| Depth processing | 20% | Filtering, interpolation |
+| ML inference | 30% | Matrix ops, nonlinear |
+| Tracking/SLAM | 15% | Sparse linear algebra |
+| Control/fusion | 10% | Sequential, branchy |
+
+Each has different optimal compute architecture.
+
+## What We Need
+
+### Efficient ML Accelerator
+- INT8 matrix multiply (95% of inference)
+- Flexible enough for various network shapes
+- Low power (10-50 TOPS/W target)
+- Low latency startup (no batch amortization)
+
+### Image Processing Unit
+- 2D convolution engine
+- Distortion correction (LUT-based)
+- Feature detection (Harris, ORB)
+- Stream processing (minimize memory round-trips)
+
+### Memory Architecture
+- High bandwidth for tensor operations
+- Low latency for sparse access (SLAM)
+- Scratchpad for intermediate results
+- DMA engines for background data movement
+
+### Compute Fabric
+- Ability to pipeline operations across units
+- Minimal CPU involvement in data flow
+- Power gating for unused units
+
+## Trade-offs in Discussion
+
+**Fixed function vs programmable**: Fixed is efficient but inflexible. Programmable handles algorithm changes but wastes area/power.
+
+Recommendation: Fixed for stable algorithms (distortion, simple filtering), programmable for evolving algorithms (ML, SLAM).
+
+**On-chip vs off-chip memory**: On-chip is fast and efficient but limited. Off-chip is large but power-hungry.
+
+Recommendation: Large on-chip scratchpad for inference (models fit), accept off-chip for mapping (data doesn't fit).
+
+**Separate NPU vs GPU compute**: Dedicated NPU is efficient. GPU compute is flexible.
+
+Recommendation: Dedicated NPU for inference, reserve GPU for graphics. Don't share.
+
+## Working with the Chip Team
+
+The chip design cycle is 2-3 years. Decisions made now determine what's possible in 2021.
+
+My role:
+- Provide workload characterization with cycle-accurate models
+- Benchmark competing architectures on our algorithms
+- Define KPIs that matter (not just TOPS, but TOPS/W at our model sizes)
+- Review architecture proposals for perception fit
+
+It's a different kind of engineering - influencing hardware through analysis rather than writing code. But the leverage is enormous.

@@ -1,0 +1,92 @@
+---
+title: "Speckle-Based Eye Tracking: A Novel Approach"
+date: "2018-05-14"
+excerpt: "Using laser speckle patterns for high-precision eye tracking - the physics, implementation, and path to a patent."
+tags: ["Eye Tracking", "Optics", "Speckle", "Patents", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We've been exploring an unconventional approach to eye tracking that exploits laser speckle patterns. It's now mature enough to file a patent.
+
+## What is Speckle?
+
+When coherent light (laser) illuminates a rough surface, the scattered light creates an interference pattern of bright and dark spots called "speckle." This pattern is:
+
+- **Unique to the surface**: Like a fingerprint
+- **Sensitive to viewing angle**: Changes with observer position
+- **High spatial frequency**: Fine-grained structure
+
+## Speckle on the Eye
+
+The human cornea and iris have surface texture that creates speckle when illuminated with coherent NIR light.
+
+Key insight: **as the eye rotates, the speckle pattern translates**.
+
+If we can track the speckle pattern's movement, we can track eye rotation with very high precision.
+
+## Implementation Concept
+
+```
+VCSEL Illumination → Corneal Reflection → Speckle Pattern →
+High-Speed Camera → Pattern Correlation → Gaze Estimation
+```
+
+### Illumination
+Vertical-Cavity Surface-Emitting Lasers (VCSELs):
+- Coherent enough for speckle generation
+- Eye-safe at low power
+- Compact and efficient
+
+### Imaging
+Capture speckle pattern on specialized camera:
+- Small pixel size to resolve speckle (≤3μm)
+- High frame rate for fast eye movements (>200Hz)
+- NIR sensitivity matching VCSEL wavelength
+
+### Pattern Tracking
+Cross-correlation between consecutive frames:
+```
+offset = argmax(correlation(frame_n, frame_n-1))
+rotation = f(offset, geometry)
+```
+
+Sub-pixel correlation gives sub-degree rotation precision.
+
+## Advantages Over Traditional Eye Tracking
+
+**Resolution**: Traditional glint/pupil tracking limited by image resolution. Speckle provides sub-pixel precision.
+
+**Speed**: Pattern correlation is computationally simpler than feature detection.
+
+**Robustness**: Less sensitive to pupil dilation, partial occlusion.
+
+## Challenges
+
+**Speckle decorrelation**: If surface changes (tears, blinking), pattern changes. Need to detect and handle decorrelation events.
+
+**Hardware requirements**: Needs coherent source and high-resolution sensor - adds cost and power.
+
+**Eye safety**: Coherent radiation requires careful safety analysis. Must meet IEC 62471 Class 1.
+
+## Patent Strategy
+
+We're filing on:
+1. Method of eye tracking using speckle correlation
+2. Apparatus with specific VCSEL + sensor configuration
+3. Decorrelation detection and recovery
+
+The combination of eye safety constraints, speckle imaging requirements, and correlation algorithms is novel.
+
+## Path Forward
+
+Current status: bench prototype showing 0.1° accuracy, limited to slow movements.
+
+Needed for product:
+- Faster correlation (GPU/DSP implementation)
+- Reliable decorrelation handling
+- Integration with display optics
+
+This may not make V1 product, but it's promising for future iterations.
+
+*[Patent granted 2020: US10948981 "Method and System for Eye Tracking Using Speckle Patterns"]*

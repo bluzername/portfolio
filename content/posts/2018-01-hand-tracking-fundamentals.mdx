@@ -1,0 +1,84 @@
+---
+title: "Hand Tracking for AR: From Depth to Skeleton"
+date: "2018-01-15"
+excerpt: "The technical pipeline for real-time hand tracking - depth sensing, segmentation, keypoint detection, and skeleton fitting."
+tags: ["Hand Tracking", "Computer Vision", "Deep Learning", "Mixed Reality", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Hands are the natural interface for AR. No controllers to find, no buttons to learn. Just reach out and interact. Making this work requires solving one of the hardest perception problems.
+
+## Why Hands Are Hard
+
+**Self-occlusion**: Fingers constantly block each other from the camera's view.
+
+**High DOF**: 25+ joints, each with multiple degrees of freedom. The configuration space is enormous.
+
+**Speed**: Hands move fast - up to 5m/s in gestures. Need low latency tracking.
+
+**Appearance variation**: Skin tone, hand size, jewelry, nail polish all vary.
+
+**Interaction proximity**: Most interactions happen at arm's length, 30-60cm from the headset.
+
+## The Pipeline
+
+```
+Depth Image → Hand Segmentation → Keypoint Detection →
+Skeleton Fitting → Temporal Filtering → Output Pose
+```
+
+### Hand Segmentation
+First, find the hands in the scene. We use:
+- Depth thresholding (hands are typically at known range)
+- Learned segmentation network for precise boundaries
+- Temporal tracking to maintain identity across frames
+
+### Keypoint Detection
+From the segmented hand region, detect anatomical keypoints:
+- Fingertips (5)
+- Finger joints (10)
+- Palm points (5-10)
+- Wrist (2)
+
+Approaches:
+- **Heatmap regression**: CNN outputs probability maps for each keypoint
+- **Direct regression**: CNN outputs (x,y,z) coordinates directly
+
+Heatmap is more robust; direct is faster. We use heatmap.
+
+### Skeleton Fitting
+Keypoint detections are noisy and may be partially occluded. Fit a kinematic skeleton model:
+- Known bone lengths (calibrated or estimated from visible segments)
+- Joint angle constraints (fingers don't bend backward)
+- Temporal smoothness priors
+
+Optimization: minimize keypoint reprojection error subject to kinematic constraints.
+
+### Temporal Filtering
+Raw per-frame outputs are jittery. Apply:
+- Kalman filtering for position/velocity estimation
+- Occlusion-aware interpolation when confidence drops
+- Gesture-specific smoothing (pinch should be crisp, wave should flow)
+
+## Depth vs RGB
+
+We could do hand tracking with RGB alone (many phone implementations do). But depth helps:
+- Unambiguous 3D - no scale uncertainty
+- Works in low light
+- Less sensitive to skin tone
+
+Trade-off: depth sensor power, depth artifacts at hand edges.
+
+For our system, depth-first makes sense. RGB as backup for outdoor scenarios.
+
+## Training Data
+
+This is where synthetic data shines. We need:
+- Millions of hand poses
+- With occlusions, lighting variation, backgrounds
+- Perfect joint annotations
+
+Real data collection can't provide this. Our synthetic hand renderer is now a critical path item.
+
+Next month: diving into the neural network architecture.

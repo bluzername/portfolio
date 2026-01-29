@@ -1,0 +1,62 @@
+---
+title: "SLAM for Mixed Reality: A Practitioner's Primer"
+date: "2016-04-18"
+excerpt: "Understanding Simultaneous Localization and Mapping from an implementation perspective - the backbone of any spatial computing device."
+tags: ["SLAM", "Computer Vision", "Robotics", "Mixed Reality", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+SLAM - Simultaneous Localization and Mapping - is the algorithmic backbone of spatial computing. The device must simultaneously build a map of its environment AND track its position within that map. It's a chicken-and-egg problem that has occupied robotics researchers for decades.
+
+## The SLAM Problem
+
+Given a sequence of sensor observations, estimate:
+1. The trajectory of the sensor (6DoF pose over time)
+2. A map of the environment
+
+The challenge: you need a map to localize, but you need to know your position to build the map.
+
+## Visual SLAM Pipeline
+
+Modern visual SLAM systems typically follow this architecture:
+
+```
+Camera Frames → Feature Extraction → Feature Matching →
+Motion Estimation → Local Mapping → Loop Closure →
+Global Optimization
+```
+
+**Feature Extraction**: ORB, SIFT, or learned features identify distinctive points in each frame.
+
+**Feature Matching**: Track features across frames, reject outliers using RANSAC.
+
+**Motion Estimation**: Compute relative pose between frames using epipolar geometry or PnP (if 3D points are known).
+
+**Local Mapping**: Triangulate new 3D points, refine recent poses via bundle adjustment.
+
+**Loop Closure**: Detect when we've returned to a previously visited location, correct accumulated drift.
+
+## Visual-Inertial Odometry (VIO)
+
+Pure visual SLAM struggles with:
+- Fast motion (motion blur)
+- Textureless regions
+- Scale ambiguity (monocular)
+
+IMU (Inertial Measurement Unit) integration addresses these:
+- High-frequency motion tracking (200-1000Hz) fills gaps between camera frames
+- Accelerometer provides absolute scale
+- Gyroscope handles fast rotations
+
+The fusion is non-trivial. IMU has drift, cameras have latency. Tight coupling through factor graphs or EKF variants is current best practice.
+
+## MR-Specific Challenges
+
+For headsets, SLAM has additional requirements:
+- **Sub-millimeter accuracy**: Virtual objects must stay locked to the real world
+- **Robust initialization**: Must work instantly when user puts on headset
+- **Persistent maps**: Remember spaces across sessions
+- **Multi-user**: Multiple devices sharing the same map
+
+We're still figuring out the right architecture. More next month as we prototype different approaches.

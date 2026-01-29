@@ -1,0 +1,96 @@
+---
+title: "Sensor Fusion 2.0: Tighter Integration, Better Robustness"
+date: "2019-10-21"
+excerpt: "Evolving our sensor fusion architecture for V2 - tighter coupling, failure prediction, and graceful degradation."
+tags: ["Sensor Fusion", "VIO", "Robustness", "Architecture", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+V1's sensor fusion was good enough to ship. V2 needs fusion that's genuinely robust - handles the edge cases that caused V1 tracking failures.
+
+## V1 Fusion Analysis
+
+Analyzing V1 tracking failures revealed patterns:
+
+**Failure modes:**
+1. Visual deprivation (33%): Too few features, low light, motion blur
+2. IMU issues (22%): Saturation, vibration, bias jumps
+3. Synchronization (18%): Timing drift between sensors
+4. Initialization (15%): Bad startup state
+5. Environmental (12%): Dynamic scenes, reflections
+
+## V2 Fusion Architecture
+
+### Tighter Visual-Inertial Coupling
+V1: Loosely coupled EKF
+V2: Tightly coupled factor graph
+
+Factor graph advantages:
+- Relinearization handles nonlinearity better
+- Easy to add/remove measurement types
+- Natural handling of delayed measurements
+- Better for debugging (explicit constraint graph)
+
+### Multi-Frame Feature Tracking
+V1: Frame-to-frame matching
+V2: Long-term feature tracks across 10+ frames
+
+Benefits:
+- More constraints per optimization window
+- Better handle of momentary occlusions
+- Implicit loop closure within window
+
+### Predictive Failure Detection
+Don't wait for failure - predict it:
+- Feature count trending downward → slow down, gather more data
+- IMU variance spiking → trust vision more
+- Lighting changing rapidly → increase exposure adaptation rate
+
+State machine with confidence levels:
+```
+Normal → Degraded → Recovery → Normal
+         ↓
+     Emergency (IMU-only)
+```
+
+### Graceful Degradation
+When fusion quality drops, degrade gracefully:
+- Level 0: Full 6DoF, mm accuracy
+- Level 1: Full 6DoF, cm accuracy (reduced features)
+- Level 2: 3DoF orientation only (visual failure)
+- Level 3: IMU propagation only (temporary)
+- Level 4: Lost (requires reinitialization)
+
+User sees smooth experience through most degradations.
+
+## Implementation Challenges
+
+### Computational Cost
+Factor graphs are more expensive than EKF. Mitigations:
+- Sparse solvers (Cholesky on sparse matrices)
+- Incremental updates (iSAM2-style)
+- Marginalization of old states
+
+Target: similar CPU load to V1 EKF despite richer model.
+
+### Tuning Complexity
+More parameters to tune:
+- Measurement noise models for each sensor
+- Prior weights
+- Outlier thresholds
+- Window sizes
+
+Building automated tuning infrastructure:
+- Logged data from V1 devices
+- Ground truth from motion capture
+- Optimization over tuning parameters
+
+### Testing
+How do you test robustness?
+- Challenging datasets (low light, fast motion, dynamic scenes)
+- Fault injection (simulate sensor failures)
+- Long-duration stress tests
+- Edge case library from V1 failures
+
+Every V1 failure report becomes a regression test for V2.

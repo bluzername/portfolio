@@ -1,0 +1,87 @@
+---
+title: "Perception System Architecture: Putting It All Together"
+date: "2016-11-15"
+excerpt: "Architecting a complete perception system for mixed reality - from sensor selection to software pipeline to system integration."
+tags: ["System Architecture", "Perception", "Mixed Reality", "Hardware", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+After months of deep-diving into individual components - depth sensors, SLAM, sensor fusion - it's time to step back and architect the complete perception system.
+
+## System Requirements
+
+What we need to deliver:
+- **6DoF head tracking**: under 1mm position, under 0.1° orientation accuracy
+- **Environment mapping**: Room-scale 3D mesh, ~1cm resolution
+- **Plane detection**: Horizontal and vertical surfaces for content placement
+- **Hand tracking**: 25-joint hand skeleton at 30Hz (stretch goal)
+- **Eye tracking**: Gaze vector for foveated rendering and interaction
+
+All within 1.5W perception budget and under 20ms latency.
+
+## Sensor Suite
+
+After extensive prototyping:
+
+| Sensor | Purpose | Resolution | Rate |
+|--------|---------|------------|------|
+| Tracking cameras (x2) | VIO, SLAM | 640x480 | 60Hz |
+| Depth camera | Meshing, plane detection | 320x240 | 30Hz |
+| Eye cameras (x2) | Eye tracking | 320x320 | 90Hz |
+| IMU | High-rate motion | - | 1kHz |
+
+The two tracking cameras provide stereo and wide coverage. Depth camera supplements with metric depth for meshing. Eye cameras run faster for responsive gaze tracking.
+
+## Processing Architecture
+
+```
+                    ┌─────────────────────┐
+                    │      DSP Core       │
+                    │  - Feature extract  │
+                    │  - Depth filtering  │
+                    └──────────┬──────────┘
+                               │
+┌──────────┐         ┌────────▼────────┐         ┌──────────┐
+│  Sensors │────────►│    CPU Cores    │────────►│ Display  │
+│          │         │  - VIO/SLAM     │         │ Pipeline │
+└──────────┘         │  - Fusion       │         └──────────┘
+                     │  - Eye tracking │
+                     └────────┬────────┘
+                              │
+                    ┌─────────▼─────────┐
+                    │    GPU/NPU        │
+                    │  - Meshing        │
+                    │  - Hand tracking  │
+                    │  - ML inference   │
+                    └───────────────────┘
+```
+
+## Data Flow
+
+Critical path (head tracking):
+1. Camera frame captured (t=0)
+2. IMU propagation for immediate pose (t=1ms)
+3. Feature extraction on DSP (t=5ms)
+4. VIO update on CPU (t=10ms)
+5. Pose delivered to display (t=12ms)
+
+Total latency: 12ms, leaving 8ms buffer for display pipeline.
+
+## Interface Contracts
+
+Clear APIs between subsystems:
+- **Pose service**: Provides head pose at any timestamp (interpolated/extrapolated)
+- **Map service**: Spatial anchors, meshes, plane primitives
+- **Gaze service**: Eye gaze rays for rendering and input
+
+Each service has defined latency, accuracy, and failure mode contracts.
+
+## Open Questions
+
+Still wrestling with:
+- Depth vs stereo for meshing - depth is better but more power
+- Eye tracking accuracy requirements - depends on display architecture
+- Persistent maps - how much storage, privacy implications
+
+December will be spec freeze. Time to commit.

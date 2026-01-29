@@ -1,0 +1,75 @@
+---
+title: "VPS for Ray-Ban Meta AI Glasses"
+date: "2023-06-19"
+excerpt: "Bringing visual positioning to consumer smart glasses - extreme power constraints and new use cases."
+tags: ["Smart Glasses", "Ray-Ban Meta", "VPS", "Wearables", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Ray-Ban Meta AI glasses are launching with Meta AI built in. We're preparing VPS integration for the next generation.
+
+## Glasses vs Headset Constraints
+
+| Constraint | Quest 3 | Ray-Ban Meta |
+|------------|---------|--------------|
+| Weight | 500g | 40g |
+| Battery | 3-4 hrs | 4+ hrs always-on |
+| Compute | High-end mobile | Ultra-low power |
+| Cameras | Multi-camera rig | Small forward camera |
+| Use case | Sessions | Always-on |
+
+Orders of magnitude harder.
+
+## Glasses VPS Architecture
+
+Can't run Quest VPS architecture on glasses. Complete rethink:
+
+**Sparse queries**: Once per minute, not continuous
+**Cloud-heavy**: Minimal on-device processing
+**Semantic focus**: "Where am I?" not "Exactly where am I?"
+**Multi-modal**: GPS + WiFi + visual combined
+
+Different product, different architecture.
+
+## Privacy Amplified
+
+Glasses worn in public continuously raise privacy stakes:
+- Bystanders don't know when cameras active
+- Social norms around glasses different than headsets
+- Always-on means more potential capture
+
+Even more stringent privacy requirements:
+- Extremely limited data retention
+- Clear indicators during any capture
+- Location only when user explicitly requests
+
+## Use Cases
+
+Different from Quest:
+- **Contextual AI**: "What building is this?" → VPS identifies location → AI provides info
+- **Navigation**: Step-by-step walking directions with audio
+- **Memory**: "Remember I parked here" with visual confirmation
+- **Social**: Share location with context ("I'm at this café")
+
+Less about AR overlay, more about AI context.
+
+## Technical Approach
+
+**Ultra-efficient features**: New network architecture targeting 5mW inference
+**Compressed queries**: Send minimal data for cloud matching
+**Predictive localization**: Guess location before query completes
+**Graceful degradation**: GPS fallback is acceptable
+
+## Timeline
+
+Ray-Ban Meta launching 2023 without VPS.
+Next generation (2024+) targeted for VPS integration.
+
+Using this generation to:
+- Understand real sensor characteristics
+- Collect training data (consented)
+- Refine ultra-low-power algorithms
+- Build glasses-specific maps
+
+Preparing for the future where glasses have spatial awareness.

@@ -1,0 +1,79 @@
+---
+title: "Eye Tracking Optics: Imaging the Eye in a Headset"
+date: "2017-08-21"
+excerpt: "The optical design challenges of capturing the eye from millimeters away - illumination, imaging, and integration with the display system."
+tags: ["Eye Tracking", "Optics", "Hardware Design", "Illumination", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Imaging the eye from inside a headset is fundamentally different from webcam-style eye tracking. Everything is closer, faster, and more constrained.
+
+## Geometric Constraints
+
+Eye-to-camera distance: 15-25mm
+Required eye box: 12mm × 8mm (accounting for headset slippage)
+Camera FOV: ~60° to image entire eye across eye box
+
+At this proximity:
+- Depth of field is extremely shallow
+- Focus across the full eye (cornea to sclera) is challenging
+- Lens distortion is severe
+
+## Illumination Architecture
+
+We need controlled illumination because:
+- IR images enable pupil/iris boundary detection
+- Glints provide geometric reference
+- Must overpower ambient IR (sunlight has strong NIR content)
+
+Design choices:
+
+**LED position**: On-axis (camera co-located with LEDs) vs off-axis (LEDs around the display)
+- On-axis: bright pupil effect (retro-reflection), but requires beam splitter
+- Off-axis: dark pupil imaging, simpler optics, but asymmetric illumination
+
+**LED count**: More LEDs = more glints = more geometric constraints for gaze
+- 2 LEDs: minimal system (pupil + one glint pair)
+- 4+ LEDs: overdetermined, more robust
+- Each LED adds power and potential stray light
+
+**Modulation**: Synchronized illumination with camera exposure
+- Enables ambient rejection
+- Allows LED identification for glint correspondence
+
+We're using 4 off-axis LEDs with temporal modulation.
+
+## Camera Selection
+
+Key specs:
+- **Resolution**: 320×320 sufficient if we're pupil-limited anyway
+- **Frame rate**: 90-120Hz for smooth tracking through saccades
+- **Shutter**: Global shutter essential (eye moves during exposure)
+- **Sensitivity**: High quantum efficiency at 850nm
+- **Size**: Must fit in headset form factor
+
+CMOS vs CCD: CMOS wins on power and integration. Global shutter CMOS parts are available now.
+
+## Diffractive Optical Elements
+
+One innovation we're exploring: using diffractive optical elements (DOEs) for eye imaging.
+
+The display already uses waveguides to project images. Can we use the same or similar structures to:
+- Direct eye-tracker camera off the optical path
+- Create structured illumination patterns
+- Multiplex imaging and tracking functions
+
+This could dramatically simplify the overall optical architecture. Patent work is ongoing.
+
+## Integration Challenges
+
+Eye tracking adds:
+- Cameras near the user's eyes (comfort, aesthetics)
+- IR illumination (eye safety certification)
+- Processing load (power budget)
+- Additional calibration (complexity)
+
+Justifying this requires clear value delivery: foveated rendering power savings must exceed eye tracking power cost.
+
+The math works, but margins are thin. Execution matters.

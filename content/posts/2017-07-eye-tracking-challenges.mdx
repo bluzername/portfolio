@@ -1,0 +1,86 @@
+---
+title: "Eye Tracking in AR: Technical Challenges and Approaches"
+date: "2017-07-17"
+excerpt: "Building robust eye tracking for mixed reality - from pupil detection to gaze estimation to the unique challenges of see-through displays."
+tags: ["Eye Tracking", "Computer Vision", "Optics", "Mixed Reality", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Eye tracking enables the next level of AR interaction: foveated rendering, natural UI, social presence. It's also one of the hardest perception problems on the headset.
+
+## Why Eye Tracking is Hard
+
+**The eye is a moving target** - saccades (fast eye movements) reach 500°/s. Your tracker needs to keep up.
+
+**Variable conditions** - pupil size changes 2-8mm based on lighting. Makeup, glasses, contact lenses add variation.
+
+**Near-eye optics** - unlike webcam eye tracking, we're millimeters from the eye. Extreme wide-angle distortion.
+
+**Occlusion** - eyelids, eyelashes, reflections from the display all interfere.
+
+**Biometric sensitivity** - iris patterns are unique identifiers. Privacy constraints apply.
+
+## The Eye Tracking Pipeline
+
+```
+IR Illumination → Eye Camera → Pupil Detection →
+Glint Detection → Gaze Estimation → Filtering/Prediction
+```
+
+### IR Illumination
+Multiple IR LEDs create "glints" (corneal reflections) that provide geometric reference points.
+
+### Pupil Detection
+Find the pupil ellipse in the eye image. Challenges:
+- Variable size and shape
+- Partial occlusion by eyelids
+- Reflections from display
+
+Classical approach: edge detection + ellipse fitting
+Learning approach: trained pupil segmentation network
+
+### Glint Detection
+Corneal reflections of IR LEDs. Their positions relative to pupil indicate gaze direction.
+
+Problem: display reflections create false glints. Discrimination via modulation patterns.
+
+### Gaze Estimation
+
+**Model-based**: Fit a 3D eye model (cornea as sphere, pupil as disk). Estimate gaze as optical axis.
+- Requires calibration per user
+- Robust once calibrated
+- Handles glasses poorly
+
+**Appearance-based (learned)**: Direct regression from eye image to gaze vector.
+- Needs large training data
+- Can handle more variation
+- May not generalize to unseen conditions
+
+**Hybrid**: Model-based geometry + learned refinement. Our current direction.
+
+## The Calibration Problem
+
+Users have different:
+- Eye shapes
+- Kappa angle (visual axis vs optical axis)
+- Head-eye geometry
+
+Standard solution: 5-9 point calibration where user looks at known targets.
+
+UX problem: users hate calibration. It's boring, takes time, and must be repeated.
+
+We're researching implicit calibration - inferring the calibration parameters from natural gaze behavior over time.
+
+## Foveated Rendering Requirements
+
+To save rendering compute, only render full detail where the user is looking.
+
+Requires:
+- Latency under 10ms from eye movement to render adjustment
+- Accuracy under 1° to avoid visible quality transitions
+- Prediction of saccade endpoints (because saccades are faster than rendering)
+
+This is aggressive. Our current system achieves ~15ms latency. Getting below 10ms requires tight integration with the display pipeline.
+
+More on the optics side of eye tracking next month.

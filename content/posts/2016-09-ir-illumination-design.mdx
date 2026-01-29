@@ -1,0 +1,56 @@
+---
+title: "IR Illumination Design for Depth Sensing"
+date: "2016-09-12"
+excerpt: "The physics and engineering of infrared illumination systems for ToF and structured light depth cameras."
+tags: ["IR Illumination", "Depth Sensing", "Optics", "Hardware Design", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Depth sensors need light to see. Unlike passive cameras that use ambient light, active depth sensors emit their own illumination - typically in the near-infrared (NIR) spectrum around 850nm or 940nm.
+
+## Why NIR?
+
+**Invisible to users**: 850nm+ is outside human visual range
+**Efficient sources**: VCSELs and LEDs are mature at these wavelengths
+**Sensor sensitivity**: Silicon sensors still respond well (though sensitivity drops above 900nm)
+**Sunlight filtering**: Narrow bandpass filters can reject most solar spectrum
+
+## Illumination Architectures
+
+### Flood Illumination (ToF)
+Cover the entire field of view with uniform IR light. Simple conceptually, but challenges include:
+
+- **Uniformity**: Edges of FOV receive less light (cosine falloff + lens vignetting)
+- **Power density**: More range requires more power, but eye safety limits peak intensity
+- **Efficiency**: Much light falls on areas we don't need (sky, distant objects)
+
+### Patterned Illumination (Structured Light)
+Project a known pattern (dots, lines, speckle) and use deformation for triangulation.
+
+- **Diffractive Optical Elements (DOE)**: Split single beam into pattern - very power efficient
+- **Pattern design**: Must be unique enough for unambiguous matching
+- **Density trade-off**: More points = more resolution but harder matching
+
+### Spot Illumination (Scanning)
+Single beam scanned across the scene (like LiDAR).
+
+- **Power efficient**: All energy concentrated in measurement point
+- **Slow**: Mechanical scanning limits frame rate
+- **Eye safety**: Easier to manage with low duty cycle per point
+
+## Design Constraints
+
+For our headset:
+- **Eye safety**: IEC 62471 Class 1 limits power density at the eye
+- **Power budget**: under 200mW for illumination
+- **Range**: 0.3m to 5m indoor, 0.3m to 3m outdoor
+- **Ambient rejection**: Must work in 10,000 lux sunlight
+
+The math is harsh. Sunlight at 940nm contributes ~0.2 mW/cm²/nm. Our narrow filter (10nm bandwidth) still passes 2 mW/cm². We need to exceed this with our illumination at 5m range while staying within power and safety budgets.
+
+## Multi-Frequency Approaches
+
+One promising direction: modulate illumination at frequencies where ambient light doesn't contribute. Time-domain or frequency-domain filtering can reject DC (sunlight) while preserving our modulated signal.
+
+Next month: diving deeper into the optics design.

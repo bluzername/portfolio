@@ -1,0 +1,91 @@
+---
+title: "Neural Map Compression: Shrinking 3D Maps 100x"
+date: "2022-01-17"
+excerpt: "Using neural representations to dramatically compress 3D maps - enabling device-side map storage and faster queries."
+tags: ["Neural Networks", "Compression", "Maps", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+VPS maps are big. A city block can be 100MB of point clouds and features. Neural compression can shrink this dramatically while maintaining localization accuracy.
+
+## The Compression Opportunity
+
+Traditional map: Explicit 3D points + descriptors
+- Storage: 100MB per city block
+- Query: Search through all points
+
+Neural map: Learned implicit representation
+- Storage: 1MB network weights
+- Query: Network inference
+
+100x compression enables:
+- Maps on device (no cloud query needed)
+- Faster retrieval (smaller search space)
+- Lower bandwidth (less data transfer)
+
+## NeRF-Based Approaches
+
+Neural Radiance Fields (NeRF) learn scene representation:
+```
+(x, y, z, direction) → Network → (color, density)
+```
+
+For localization, we care about:
+- Feature consistency across viewpoints
+- Distinctive enough for matching
+- Compact representation
+
+Adapting NeRF for localization rather than rendering.
+
+## Implementation
+
+### Training
+Given: Images + poses from mapping
+Learn: Neural network that encodes the scene
+```
+Scene Images → Encoder → Compact Representation → Decoder → Synthesized Views
+```
+
+Trained to minimize reconstruction error.
+
+### Localization
+Given: Query image
+Find: Pose that best explains the query given the neural map
+```
+Query + Neural Map → Optimization → Best Pose
+```
+
+Iteratively refine pose until synthesized view matches query.
+
+## Results
+
+Testing on VPS benchmark:
+- Traditional: 100MB, 73% recall@1m
+- Neural: 1MB, 68% recall@1m
+- Neural (2MB): 71% recall@1m
+
+Slight accuracy loss for dramatic size reduction. Often acceptable trade-off.
+
+## Hybrid Approaches
+
+Pure neural loses some distinctive features. Hybrid approach:
+- Neural representation for most of the scene
+- Explicit features for distinctive landmarks
+- Combined: small + accurate
+
+Current best: 5MB hybrid achieves 72% recall@1m (vs 100MB baseline at 73%).
+
+## Challenges
+
+**Training time**: Each location needs individual training (hours of GPU time)
+**Update latency**: Can't quickly update neural maps when scene changes
+**Edge cases**: Neural interpolation may fail in unusual viewpoints
+
+## Deployment Path
+
+1. Offline compression: Maps compressed before deployment
+2. Hybrid serving: Neural for bulk, explicit for disambiguation
+3. Device-side maps: Downloaded once, used without connectivity
+
+Targeting device-side maps for Quest 3.

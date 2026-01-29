@@ -1,0 +1,83 @@
+---
+title: "Camera Calibration: Theory Meets Manufacturing Reality"
+date: "2017-02-20"
+excerpt: "The gap between textbook calibration and production-scale calibration of perception systems - where precision meets throughput."
+tags: ["Calibration", "Computer Vision", "Manufacturing", "Quality", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Calibration is the unsexy foundation of every perception system. Get it wrong, and nothing else matters.
+
+## What Needs Calibrating
+
+**Intrinsic parameters**: Focal length, principal point, distortion coefficients for each camera.
+
+**Extrinsic parameters**: Relative pose between every sensor pair (camera-camera, camera-IMU, camera-depth).
+
+**Temporal alignment**: Latency offsets between sensors.
+
+**Depth-specific**: ToF phase offsets, systematic depth errors, multi-path correction tables.
+
+## The Textbook Approach
+
+Standard calibration: wave a checkerboard in front of the device, detect corners, run bundle adjustment.
+
+Works great in a lab with one prototype and an expert operator.
+
+Fails completely at manufacturing scale with:
+- 10 seconds per device
+- Operators with minimal training
+- Environmental variation (temperature, lighting)
+- Thousands of devices per day
+
+## Production Calibration Architecture
+
+We're designing a calibration cell:
+
+```
+┌────────────────────────────────────────────┐
+│              Calibration Cell              │
+│  ┌────────────────────────────────────┐   │
+│  │      Controlled Environment        │   │
+│  │  - Temperature: 25°C ± 1°C        │   │
+│  │  - Humidity: 45% ± 5%             │   │
+│  │  - Lighting: 500 lux diffuse      │   │
+│  └────────────────────────────────────┘   │
+│                                            │
+│  ┌──────────────┐    ┌──────────────┐    │
+│  │  Reference   │    │    Device    │    │
+│  │   Targets    │    │   Under      │    │
+│  │  (3D known   │    │   Test       │    │
+│  │   geometry)  │    │              │    │
+│  └──────────────┘    └──────────────┘    │
+│                                            │
+│  ┌────────────────────────────────────┐   │
+│  │      Automated Motion System       │   │
+│  └────────────────────────────────────┘   │
+└────────────────────────────────────────────┘
+```
+
+The motion system moves reference targets through the field of view, collecting data across the full calibration manifold automatically.
+
+## Key Insights
+
+**Temperature matters**: Optical systems change with temperature. A camera calibrated at 25°C may be off at 35°C operating temperature. We need thermal models.
+
+**Calibration lifetime**: Parameters drift over time (mechanical settling, thermal cycling). How often do we need to recalibrate?
+
+**Per-unit vs. golden**: Some parameters can use nominal values; others must be measured per-unit. Finding this boundary is crucial for throughput.
+
+**Self-calibration**: Can the device recalibrate itself in the field? Essential for longevity.
+
+## Accuracy Budgets
+
+Working backwards from user experience:
+- Virtual object placement: ±1cm accuracy
+- Requires 6DoF tracking: ±1mm, ±0.1°
+- Requires intrinsic calibration: under 0.2 pixel error
+- Requires extrinsic calibration: under 0.1° rotation, under 0.5mm translation
+
+These are tight tolerances for a consumer device.
+
+More on depth calibration specifically next month.

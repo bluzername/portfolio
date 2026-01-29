@@ -1,0 +1,73 @@
+---
+title: "Year One at Magic Leap: A Retrospective"
+date: "2017-12-18"
+excerpt: "Reflecting on my first full year building mixed reality systems - what worked, what didn't, and what I've learned."
+tags: ["Retrospective", "Leadership", "Mixed Reality", "Career", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+A year ago I joined Magic Leap knowing almost nothing about mixed reality. Today I lead the perception architecture for a device that's actually taking shape. Time for honest reflection.
+
+## What Went Well
+
+### Technical Foundation
+We have working systems:
+- Visual-inertial odometry running at 60Hz with under 1mm tracking error
+- ToF depth sensor integrated and calibrated
+- Eye tracking prototype showing promising accuracy
+- Synthetic data pipeline generating training data
+
+The architecture decisions from early 2017 are proving sound.
+
+### Team Growth
+Started with 3 engineers, now have 15 across perception disciplines:
+- Strong technical hires who are already contributing
+- Culture of demo-driven development
+- Cross-functional collaboration improving
+
+### Synthetic Data Bet
+The synthetic data team is already accelerating our ML development. Training eye tracking models on synthetic data is working better than I expected.
+
+## What Didn't Go Well
+
+### Schedule Optimism
+We underestimated integration complexity. Individual components working doesn't mean the system works. Integration bugs consumed Q3-Q4.
+
+Lesson: add 50% to integration estimates, minimum.
+
+### Hardware-Software Handoff
+Communication gaps between hardware (optics, sensors) and software (algorithms) teams caused rework. Specs that seemed clear weren't.
+
+Lesson: written specs aren't enough. Need working prototypes across the boundary.
+
+### Power Budget Overrun
+We're 30% over power budget. Every subsystem optimized locally, but the sum exceeds the system constraint. Now doing painful trade-offs.
+
+Lesson: track power continuously at system level, not just per-component.
+
+## Biggest Learnings
+
+### Perception is a System Problem
+You can't optimize depth sensing without considering SLAM. You can't optimize SLAM without considering display latency. Everything connects.
+
+### Data is Strategy
+The team that controls data generation controls algorithm development velocity. Synthetic data is strategic infrastructure.
+
+### Embedded is Different
+Algorithms that work on desktop often can't be translated to embedded. Design for target platform from day one.
+
+### Calibration is Half the Work
+Brilliant algorithms don't matter if calibration is wrong. Invest in calibration infrastructure early.
+
+## Looking Ahead to 2018
+
+Priorities:
+1. **Ship developer kit**: Real devices in real developers' hands
+2. **Power optimization**: Get back within budget
+3. **Synthetic data scaling**: 10x current generation capacity
+4. **Hand tracking**: Add hands as input modality
+
+It's going to be intense. But we're building something real. That's energizing.
+
+Thanks to everyone on the team who made this year possible. Onward.

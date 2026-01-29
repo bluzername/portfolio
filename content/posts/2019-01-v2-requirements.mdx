@@ -1,0 +1,80 @@
+---
+title: "Defining V2: Learning from V1 in the Field"
+date: "2019-01-21"
+excerpt: "Translating field feedback and technical learnings into requirements for the next-generation device."
+tags: ["Product Requirements", "V2", "Field Data", "Planning", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+V2 planning is underway. The question isn't "what do we want?" but "what did V1 teach us we need?"
+
+## V1 Pain Points (Perception)
+
+From telemetry and user feedback:
+
+**Tracking failures in challenging lighting**: 35% of reported issues
+- Users want to use device near windows
+- Evening use in dim rooms
+- Transitions (walking between rooms)
+
+**Relocalization unreliability**: 12% failure rate
+- Maps become stale
+- Users don't understand map management
+- Content "jumps" unexpectedly
+
+**Hand tracking limitations**: Frequent complaint
+- Gesture recognition was cut
+- Tracking range too limited
+- Performance degrades with occlusion
+
+**Battery life**: Sessions limited by power
+- Heavy use drains in 2.5 hours
+- Thermal throttling kicks in sooner
+
+## V2 Perception Requirements
+
+### Tracking Robustness
+- **Target**: under 1 tracking loss per hour of normal use (10x improvement)
+- **Approach**: Better sensors + smarter algorithms + wider operating envelope
+
+### Sensor Upgrades Needed
+| V1 | V2 Target | Why |
+|----|-----------|-----|
+| Tracking cam: 640x480 | 1280x720+ | More features, better low-light |
+| Depth: 320x240 ToF | 640x480 | Better meshing, hand tracking |
+| Eye cam: 320x320 | 480x480+ | More accurate gaze |
+| IMU: 1kHz | 2kHz+ | Better fast motion handling |
+
+### Hand Tracking
+- Full gesture recognition (pinch, grab, point, palm)
+- Near-range: 20-60cm from face
+- Far-range: 40-100cm (arm's length)
+- under 5° fingertip accuracy
+
+### Power Budget
+- **Target**: Same or better battery life with more capability
+- **Approach**: New chip architecture, algorithmic efficiency, smart power management
+
+## Architecture Decisions
+
+**Dedicated ML accelerator**: V1 ran ML on GPU. V2 needs NPU for efficiency.
+
+**More on-device compute**: Cloud isn't reliable enough for real-time. Process locally, sync when possible.
+
+**Sensor-algorithm co-design**: Don't pick sensors then adapt algorithms. Design together.
+
+## What We're Not Changing
+
+Some V1 decisions remain correct:
+- Visual-inertial approach for tracking (proven, robust)
+- ToF for depth (better outdoor than structured light)
+- Stereo tracking cameras (needed for stereo depth backup)
+
+## Timeline Pressure
+
+Chip tape-out is in 6 months. Sensor orders locked in 4 months.
+
+We need requirements finalized NOW for hardware that ships in 2+ years.
+
+The V1 experience helps - we know what matters. But we'll inevitably get some things wrong. Building in flexibility where we can.

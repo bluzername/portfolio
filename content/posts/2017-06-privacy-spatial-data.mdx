@@ -1,0 +1,84 @@
+---
+title: "Privacy in Spatial Computing: What the Sensors See"
+date: "2017-06-19"
+excerpt: "The privacy implications of always-on spatial sensors - what data we collect, how we protect it, and the trust we must earn."
+tags: ["Privacy", "Security", "Ethics", "Spatial Computing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+An AR headset with cameras and depth sensors is, functionally, a surveillance device you wear on your face. The same capabilities that enable magical experiences also enable unprecedented invasion of privacy.
+
+We must get this right.
+
+## What the Sensors Capture
+
+**RGB cameras**: Everything visible - faces, documents, screens, private moments.
+
+**Depth cameras**: 3D geometry of spaces - room layouts, object shapes, even body measurements.
+
+**Eye cameras**: Gaze direction reveals attention, interest, and potentially cognitive state.
+
+**Microphones**: Conversations, background audio, voice patterns.
+
+**IMU/GPS**: Movement patterns, location history.
+
+## The Data We Need vs. The Data We Capture
+
+For tracking, we need:
+- Visual features (corners, edges) - not face identity
+- Room geometry - not document contents
+- Head motion - not location history
+
+Principle: **capture the minimum necessary, process locally, retain nothing unnecessary.**
+
+## Privacy Architecture
+
+### Local Processing First
+All perception runs on-device. Raw sensor data never leaves the headset by default.
+
+### Feature Abstraction
+Instead of storing images, store visual descriptors - mathematical representations that work for matching but can't reconstruct the original image.
+
+### Encryption at Rest
+Any stored maps or spatial data are encrypted with keys derived from user authentication.
+
+### Explicit Consent
+Cloud features (shared spaces, backup) require explicit opt-in with clear explanation of what's shared.
+
+### Data Minimization
+Maps older than N days are automatically deleted unless explicitly saved.
+
+## Adversarial Considerations
+
+Even with good intentions, we must consider:
+
+**Device theft**: If someone steals the headset, what can they access? → Encryption tied to biometric/PIN.
+
+**Malicious apps**: Can an app exfiltrate camera data? → Strict permission model, no raw camera access for third parties.
+
+**Legal requests**: What can we provide to authorities? → We can't provide what we don't have. Local-first processing limits exposure.
+
+**Internal misuse**: Can employees access user data? → Access controls, audit logging, separation of duties.
+
+## The Bystander Problem
+
+The hardest issue: people near the device user didn't consent to being sensed.
+
+Options:
+- Indicator lights when cameras are active (but easily covered)
+- Audio announcement (annoying, easily defeated)
+- Face detection + blurring in stored data (computational cost, not foolproof)
+- Social norms and etiquette (unenforceable)
+
+There's no perfect solution. We're implementing indicator lights and processing-side face blurring, while acknowledging these are partial measures.
+
+## Building Trust
+
+Ultimately, privacy protection is about earning and maintaining trust:
+- Transparent documentation of data practices
+- Third-party audits
+- Quick response to discovered issues
+- User control and visibility into their data
+
+The technology is powerful. We must wield it responsibly.

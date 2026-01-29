@@ -1,0 +1,76 @@
+---
+title: "Building a Perception Team from Scratch"
+date: "2017-01-16"
+excerpt: "Lessons from hiring and structuring a multi-disciplinary perception team spanning computer vision, optics, and embedded systems."
+tags: ["Team Building", "Hiring", "Leadership", "Perception", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+With specs frozen, execution becomes everything. And execution is people. This month I've been focused on building out the perception team.
+
+## The Skill Matrix
+
+Perception sits at an unusual intersection:
+
+| Domain | Expertise Needed |
+|--------|------------------|
+| Computer Vision | SLAM, 3D reconstruction, feature detection |
+| Machine Learning | CNNs, optimization, deployment |
+| Optics | Lens design, illumination, calibration |
+| Embedded Systems | DSP, real-time, power optimization |
+| Systems Engineering | Integration, testing, requirements |
+
+Finding people who are deep in one area AND can communicate across boundaries is the challenge.
+
+## Hiring Principles
+
+**T-shaped engineers**: Deep in one domain, broad understanding of adjacent areas. A CV engineer who understands sensor noise models. An embedded engineer who groks the algorithms they're optimizing.
+
+**Prototype-oriented**: Academic publications are nice, but I want to see working code. Take-home projects over whiteboard puzzles.
+
+**Intellectual honesty**: The work is hard. I need people who say "I don't know" and "I was wrong." Ego-driven engineers create technical debt.
+
+**System thinkers**: Can they trace a requirement from user need through algorithm to hardware constraint? Most can't.
+
+## Team Structure
+
+We're organizing around deliverables, not disciplines:
+
+```
+Perception Team
+├── Tracking (VIO/SLAM)
+│   ├── CV Engineer
+│   ├── Embedded Engineer
+│   └── Systems Engineer
+├── Depth
+│   ├── Sensor Lead (optics + electronics)
+│   ├── Algorithm Engineer
+│   └── Test Engineer
+├── Eye Tracking
+│   ├── CV Engineer
+│   ├── Optics Engineer
+│   └── Embedded Engineer
+└── Infrastructure
+    ├── Simulation Engineer
+    ├── Tooling Engineer
+    └── DevOps
+```
+
+Each pod owns their feature end-to-end. Cross-cutting concerns (calibration, testing, profiling) handled by Infrastructure.
+
+## Cultural Foundations
+
+Establishing norms early:
+- **Weekly demos**: Show working systems, not slides
+- **Blameless post-mortems**: When things break (they will), learn without finger-pointing
+- **Direct feedback**: Say it in the room, not after
+- **Documentation as artifact**: If it's not written down, it doesn't exist
+
+## Challenges
+
+Hiring in Israel for MR is competitive. Everyone wants the same CV/ML engineers. Our pitch: work on problems that ship to millions, not research prototypes.
+
+We're also competing with ourselves - the US team needs the same skills. Establishing clear ownership boundaries is ongoing.
+
+Next month: onboarding and getting new hires productive.

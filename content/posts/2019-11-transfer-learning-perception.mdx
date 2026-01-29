@@ -1,0 +1,110 @@
+---
+title: "Transfer Learning for Perception: Sim-to-Real and Beyond"
+date: "2019-11-18"
+excerpt: "Techniques for transferring knowledge from synthetic to real data, and from one perception task to another."
+tags: ["Transfer Learning", "Synthetic Data", "Domain Adaptation", "Deep Learning", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Training on synthetic data, deploying on real devices. The transfer problem is central to our synthetic data strategy.
+
+## The Transfer Challenge
+
+Model trained on synthetic data: 95% accuracy on synthetic test set.
+Same model on real data: 72% accuracy.
+
+This 23% gap is the sim-to-real gap. Closing it is the game.
+
+## Domain Adaptation Techniques
+
+### Feature Alignment
+Force the network to learn domain-invariant features:
+
+**Adversarial training**: Add discriminator that tries to distinguish synthetic vs real features. Train generator to fool discriminator.
+
+```
+              ┌──────────────┐
+Image ───────►│   Encoder    │───► Features ───► Task Head ───► Prediction
+              └──────────────┘         │
+                                       │
+                              ┌────────▼────────┐
+                              │  Discriminator  │
+                              │ (syn vs real)   │
+                              └─────────────────┘
+```
+
+Loss = TaskLoss - λ × DomainLoss
+
+The subtraction makes the encoder adversarial to the discriminator.
+
+**Maximum Mean Discrepancy (MMD)**: Minimize statistical distance between feature distributions.
+
+### Self-Training
+Use model to label unlabeled real data, then train on pseudo-labels:
+
+1. Train on synthetic (labeled)
+2. Apply to real (unlabeled), get predictions
+3. Filter high-confidence predictions
+4. Retrain on synthetic + pseudo-labeled real
+5. Repeat
+
+Each iteration improves real-domain performance.
+
+### Fine-Tuning with Minimal Real Data
+How much real data do you need to close the gap?
+
+Experiments show:
+- 0% real: 72% accuracy
+- 1% real + 99% synthetic: 85% accuracy
+- 10% real + 90% synthetic: 91% accuracy
+- 100% real: 93% accuracy
+
+Small amounts of real data provide disproportionate benefit. Collect strategically.
+
+## Cross-Task Transfer
+
+Can training on one task help another?
+
+**Shared representations**: Low-level features (edges, textures) transfer across tasks.
+
+Example: Hand segmentation model → Hand keypoint model
+- Pre-train encoder on segmentation (abundant labels)
+- Fine-tune full model on keypoints (scarce labels)
+
+Result: 15% better keypoint accuracy with same keypoint data.
+
+**Multi-task learning**: Train on multiple tasks simultaneously.
+
+Shared encoder → Multiple heads (segmentation, depth, keypoints)
+
+Benefits:
+- Regularization effect
+- Efficient use of data
+- Single model serves multiple needs
+
+Challenges:
+- Task interference (one task hurts another)
+- Loss weighting (which tasks matter more?)
+
+## Practical Pipeline
+
+Our production pipeline:
+
+1. **Pre-train** large model on synthetic data (all the data we can generate)
+2. **Domain adapt** using adversarial + self-training (no real labels needed)
+3. **Fine-tune** on curated real dataset (expensive to collect)
+4. **Specialize** per-device if calibration data available
+
+Each stage improves real-world performance.
+
+## Measuring Transfer
+
+Metrics we track:
+- **Absolute gap**: Real accuracy - Synthetic accuracy
+- **Transfer ratio**: (Real accuracy with transfer) / (Real accuracy with real training)
+- **Data efficiency**: Real samples needed to reach target accuracy
+
+Our hand tracking model: 0.85 transfer ratio with zero real data. With 10K real images: 0.97 transfer ratio.
+
+Synthetic data is working.

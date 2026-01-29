@@ -1,0 +1,102 @@
+---
+title: "Quest Pro Launch: VPS in Mixed Reality"
+date: "2022-09-19"
+excerpt: "Launching VPS as part of Quest Pro's mixed reality system - integration challenges, launch metrics, and lessons."
+tags: ["Launch", "Quest Pro", "Mixed Reality", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Quest Pro ships next month with VPS integrated into mixed reality. Our biggest launch yet.
+
+## What's Shipping
+
+**VPS in Quest Pro:**
+- Continuous localization for MR experiences
+- Sub-meter outdoor accuracy
+- Integration with Guardian and spatial anchors
+- Developer APIs for location-aware apps
+
+**Coverage:**
+- 1,000+ outdoor locations globally
+- Focus on urban areas, landmarks, campuses
+- Indoor: Enterprise partner locations only
+
+## Integration Journey
+
+### Challenges Overcome
+
+**VIO Integration**: Merging VPS with existing tracking was hard.
+- Coordinate frame alignment
+- Timing synchronization
+- Failure mode handling
+
+**Power Optimization**: Continuous VPS was too power-hungry.
+- Adaptive query frequency
+- Efficient feature extraction
+- Smart triggering (don't query when confident)
+
+**Latency Reduction**: 500ms wasn't good enough.
+- On-device map caching
+- Predictive prefetching
+- Optimized network protocol
+
+### Final Performance
+
+| Metric | Target | Achieved |
+|--------|--------|----------|
+| Accuracy | under 1m | 0.7m median |
+| Latency | under 200ms | 180ms |
+| Power | under 100mW | 85mW |
+| Success rate | >90% | 88% |
+
+Close to targets. Good enough to ship.
+
+## Launch Risks
+
+**Coverage gaps**: Many places users will try aren't mapped.
+- Mitigation: Clear messaging about coverage
+- Fallback: GPS + VIO when no VPS available
+
+**Accuracy variability**: Some conditions still challenging.
+- Mitigation: Confidence indication to apps
+- Degradation: Don't show anchored content when uncertain
+
+**Privacy concerns**: MR raises new privacy questions.
+- Mitigation: Clear privacy controls
+- Bystander indicator lights
+
+## Developer Readiness
+
+50+ launch partners have VPS-enabled experiences:
+- Museum tours with contextual information
+- Outdoor AR games with persistent content
+- Campus navigation apps
+- Enterprise training applications
+
+Developer feedback informed final APIs.
+
+## Post-Launch Plan
+
+Immediate:
+- Monitor telemetry for issues
+- Fast-follow bug fixes
+- Partner support
+
+30 days:
+- Coverage expansion based on usage data
+- Performance optimization based on field metrics
+- Developer feedback incorporation
+
+90 days:
+- Next feature planning (indoor, glasses)
+- Crowdsourced mapping general availability
+- Quest 3 preparation
+
+## Personal Reflection
+
+Two years from joining Meta to this launch. VPS went from concept to shipping product used by potentially millions of Quest Pro users.
+
+The team delivered. The technology works. Now we see if users care.
+
+Launch is just the beginning.

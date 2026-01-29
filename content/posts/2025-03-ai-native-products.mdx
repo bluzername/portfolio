@@ -1,0 +1,98 @@
+---
+title: "Building AI-Native Products: Lessons from First Projects"
+date: "2025-03-17"
+excerpt: "What I've learned from building products where AI is the core, not a feature - different principles, different challenges."
+tags: ["AI-Native", "Product", "Building", "Lessons", "Independent"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Six months of building AI-native products. The principles are different from AI-enhanced products.
+
+## AI-Enhanced vs AI-Native
+
+**AI-Enhanced** (most products today):
+- Core value exists without AI
+- AI improves experience
+- AI can fail; product still works
+- Example: Search with AI summaries
+
+**AI-Native** (what I'm building):
+- Core value IS the AI
+- Without AI, there's no product
+- AI must be reliable enough to trust
+- Example: AI that replaces a workflow
+
+Different mental models, different design principles.
+
+## Principles I've Learned
+
+### 1. Design for Uncertainty
+AI outputs are probabilistic. Design assumes uncertainty:
+- Confidence indicators
+- Human-in-the-loop for high-stakes
+- Graceful fallbacks
+- Clear error states
+
+### 2. Latency is UX
+AI inference takes time. Make waiting acceptable:
+- Stream outputs (feel faster)
+- Progressive enhancement (partial results)
+- Background processing when possible
+- Set expectations explicitly
+
+### 3. Cost is Architecture
+API costs shape what's possible:
+- Can't call GPT-4 on every keystroke
+- Caching and batching essential
+- Cheaper models for routing/filtering
+- Cost awareness throughout stack
+
+### 4. Evaluation is Product
+How do you know AI is working?
+- Build evaluation into the product
+- User feedback as training signal
+- A/B test model changes
+- Metrics that matter (not just accuracy)
+
+### 5. Prompts are Code
+Prompt engineering is software engineering:
+- Version control prompts
+- Test prompts systematically
+- Document prompt decisions
+- Review prompt changes
+
+## Products I've Built
+
+**Synthetic Market Research** (shipped):
+- Multi-agent concept validation
+- ~$2 per analysis
+- Validated against 9,000+ human responses
+
+**TrustedChat** (shipped):
+- Multi-LLM consensus
+- More reliable answers
+- In active use
+
+**Several prototypes** (learning):
+- Telegram bots for content
+- Automation tools
+- Experiments in various domains
+
+## What's Hard
+
+**Reliability**: 90% accuracy isn't enough when users expect 99%+.
+
+**Evaluation**: How do you measure "good" for generative outputs?
+
+**Iteration speed**: Model changes can break everything.
+
+**User trust**: Users don't know when to trust AI.
+
+## What's Exciting
+
+We're in early innings. The tools are new, the patterns are emerging, the opportunities are vast.
+
+Being independent lets me experiment faster than any big company could.
+
+More to build.

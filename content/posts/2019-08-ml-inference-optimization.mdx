@@ -1,0 +1,104 @@
+---
+title: "ML Inference Optimization: Squeezing Every FLOP"
+date: "2019-08-19"
+excerpt: "Advanced techniques for neural network optimization on embedded systems - beyond basic quantization and pruning."
+tags: ["Deep Learning", "Optimization", "Inference", "Performance", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We've done the obvious optimizations (INT8, pruning, efficient architectures). V2's power budget demands going deeper.
+
+## The Remaining Gap
+
+Current hand tracking model:
+- Size: 800KB (INT8)
+- Compute: 100M ops per frame
+- Latency: 12ms on target NPU
+- Power: 180mW
+
+V2 targets:
+- Better accuracy (2x model capacity)
+- Lower latency (8ms)
+- Lower power (120mW)
+
+We need more efficiency without sacrificing accuracy.
+
+## Advanced Techniques
+
+### Structured Sparsity
+Random sparsity doesn't help - hardware can't skip random zeros.
+
+Structured sparsity removes entire structures:
+- **2:4 sparsity**: 2 zeros in every 4 elements (hardware accelerated on some NPUs)
+- **Channel pruning**: Remove entire feature channels
+- **Block sparsity**: Zero out NxN blocks
+
+We're targeting 2:4 sparsity which our V2 NPU supports natively. 2x theoretical speedup.
+
+### Knowledge Distillation (Advanced)
+Beyond basic distillation:
+
+**Attention transfer**: Match intermediate attention maps, not just outputs
+**Feature mimicry**: Student learns to reproduce teacher's internal representations
+**Progressive distillation**: Teacher → medium model → small model
+
+3-5% accuracy improvement over direct training.
+
+### Neural Architecture Search (NAS)
+Don't design architectures - search for them.
+
+Search space:
+- Layer types (conv, depthwise, attention)
+- Layer sizes (channels, kernel size)
+- Connections (skip connections, bottlenecks)
+
+Objective: maximize accuracy subject to latency/power constraint.
+
+We ran NAS for 2 weeks on cloud TPUs. Found architecture 15% more efficient than manual design.
+
+### Operator Fusion
+Individual operations have overhead (kernel launch, memory access). Fusing them helps:
+
+```
+Conv → BatchNorm → ReLU → Conv → BatchNorm → ReLU
+                    ↓
+        FusedConvBNReLU → FusedConvBNReLU
+```
+
+Fused operators:
+- Single kernel launch
+- Intermediate results stay in registers
+- 20-30% speedup for common patterns
+
+### Precision Optimization
+Not all layers need same precision:
+- First layer: FP16 (sensitive to input quantization)
+- Middle layers: INT8 (bulk compute, tolerant)
+- Last layer: INT8 or FP16 depending on output sensitivity
+
+Mixed-precision analysis identified 3 layers needing FP16. Others safely INT8.
+
+### Memory Layout Optimization
+Data layout affects cache efficiency:
+- NCHW vs NHWC depends on hardware
+- Tiled layouts for better locality
+- Ping-pong buffers to hide memory latency
+
+Working with chip team to identify optimal layouts for V2 NPU.
+
+## Cumulative Impact
+
+Applying all techniques:
+
+| Technique | Speedup | Accuracy Impact |
+|-----------|---------|-----------------|
+| Structured sparsity | 1.5x | -0.5% |
+| Advanced distillation | - | +3% |
+| NAS architecture | 1.15x | +1% |
+| Operator fusion | 1.25x | 0% |
+| Mixed precision | 1.1x | -0.2% |
+
+Combined: ~2x efficiency with net accuracy gain.
+
+Hitting V2 targets looks achievable.

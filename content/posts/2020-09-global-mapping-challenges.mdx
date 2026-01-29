@@ -1,0 +1,93 @@
+---
+title: "Global-Scale 3D Mapping: The Data Challenge"
+date: "2020-09-21"
+excerpt: "Building 3D maps of the entire world - data sources, quality challenges, and the path to coverage."
+tags: ["3D Mapping", "Data", "Scale", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+To localize anywhere, you need maps everywhere. Building 3D maps at global scale is a data problem before it's an algorithm problem.
+
+## Data Sources
+
+### Crowd-Sourced Images
+Meta has access to billions of geolocated images from Facebook, Instagram, and user-shared content.
+
+Potential: Massive coverage, especially in populated areas.
+Challenges: Variable quality, privacy constraints, not uniformly distributed.
+
+### Dedicated Capture
+Vehicles or pedestrians with calibrated camera rigs capturing specific areas.
+
+Potential: High quality, controlled conditions, known accuracy.
+Challenges: Expensive, doesn't scale to everywhere.
+
+### Third-Party Maps
+Partnerships with mapping companies, government data, open-source maps.
+
+Potential: Professional quality, existing coverage.
+Challenges: Licensing, update frequency, format compatibility.
+
+### User Contributions
+AR device users contribute mapping data during normal use.
+
+Potential: Always fresh, covers where users actually go.
+Challenges: Quality control, privacy, opt-in rates.
+
+## Quality vs Coverage Trade-off
+
+**High-quality mapping** (survey-grade equipment):
+- Centimeter accuracy
+- Complete coverage within capture area
+- Expensive: $100+ per square meter
+
+**Crowd-sourced mapping** (user photos):
+- Meter-level accuracy (before refinement)
+- Spotty coverage, depends on photo density
+- Cheap: marginal cost of processing
+
+We need both: crowd-sourced for coverage, high-quality for validation.
+
+## The Long Tail Problem
+
+80% of the world's photos are of 1% of locations.
+
+Tourist sites: millions of photos
+Suburban neighborhoods: almost nothing
+
+For VPS to be useful everywhere, we need maps everywhere. That means solving the coverage long tail.
+
+Approaches:
+- Incentivize capture in under-mapped areas
+- Lower quality thresholds for sparse regions
+- Fallback to GPS + VIO when maps unavailable
+
+## Privacy at Scale
+
+Using public photos for mapping raises questions:
+- Bystander faces in images
+- Private property visible from public spaces
+- Aggregation revealing patterns
+
+Protections:
+- Face blurring in all processing
+- License plate detection and removal
+- Opt-out mechanisms for property owners
+- Differential privacy for location aggregates
+
+Privacy isn't a feature - it's a constraint on everything we build.
+
+## Processing Pipeline
+
+Raw images → map requires:
+1. Filtering (quality, duplicates, inappropriate content)
+2. Georegistration (align to coordinate system)
+3. Structure from Motion (sparse 3D)
+4. Multi-View Stereo (dense 3D)
+5. Semantic labeling (what things are)
+6. Map optimization (consistency, accuracy)
+
+At billions of images, every step is an infrastructure challenge.
+
+Current state: processing capacity for 10M images/day. Need 10x that.

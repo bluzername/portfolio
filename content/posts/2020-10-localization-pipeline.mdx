@@ -1,0 +1,119 @@
+---
+title: "6DoF Localization: From Image to Pose"
+date: "2020-10-19"
+excerpt: "The technical pipeline for localizing a device using visual features - retrieval, matching, and pose estimation."
+tags: ["Localization", "Computer Vision", "Feature Matching", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+The core VPS query: "Given an image from a device, where is that device in the world?"
+
+## The Localization Pipeline
+
+```
+Query Image → Feature Extraction → Image Retrieval →
+Feature Matching → Pose Estimation → Verification → 6DoF Pose
+```
+
+Each stage has multiple approaches. Here's what we're building.
+
+## Feature Extraction
+
+Convert image to compact representation for matching.
+
+**Classical approaches** (SIFT, ORB):
+- Hand-crafted descriptors
+- Well-understood behavior
+- Limited robustness to viewpoint/lighting change
+
+**Learned approaches** (SuperPoint, D2-Net, R2D2):
+- Neural network detects and describes keypoints
+- More robust to condition changes
+- Requires training data
+
+We use learned features for robustness, with classical fallback for edge cases.
+
+## Image Retrieval
+
+Find which part of the map database is relevant.
+
+**Global descriptors**: Compress entire image to single vector (NetVLAD, GeM).
+
+Query: Which database images are most similar to this query image?
+
+At world scale: billions of database images. Need efficient nearest-neighbor search.
+
+Solutions:
+- Hierarchical coarse-to-fine search
+- Learned hash codes for approximate NN
+- Geographic pre-filtering using device GPS
+
+Target: Top-100 candidates in under 100ms.
+
+## Feature Matching
+
+Match query features to 3D map features.
+
+For each query keypoint:
+1. Find candidate matches in retrieved map regions
+2. Use descriptor distance for initial correspondence
+3. Apply ratio test (Lowe's ratio) to reject ambiguous matches
+
+Challenges:
+- False matches (similar descriptors, wrong location)
+- Repeated structures (many buildings look alike)
+- Viewpoint difference (query view may differ significantly from map)
+
+## Pose Estimation
+
+Given 2D-3D correspondences, compute camera pose.
+
+**PnP (Perspective-n-Point)**: Classic approach
+```
+2D image points + 3D world points → 6DoF pose
+```
+
+With outliers: RANSAC + PnP
+- Sample minimal sets of correspondences
+- Compute pose from each sample
+- Score by inlier count
+- Refine using all inliers
+
+Typical: 50-100 inliers needed for robust pose.
+
+## Verification
+
+Not every pose estimate is correct. Verify before trusting.
+
+Checks:
+- **Inlier ratio**: Percentage of matches consistent with pose
+- **Geometric consistency**: Reprojection error distribution
+- **Temporal consistency**: Pose plausible given previous poses
+- **Semantic consistency**: Scene content matches expectation
+
+Confidence score determines whether to use pose or fall back to GPS.
+
+## Latency Budget
+
+End-to-end target: under 500ms from image capture to pose.
+
+| Stage | Target |
+|-------|--------|
+| Feature extraction | 50ms |
+| Image retrieval | 100ms |
+| Feature matching | 150ms |
+| Pose estimation | 50ms |
+| Verification | 50ms |
+
+On-device optimization critical for feature extraction. Cloud optimization for retrieval.
+
+## Failure Modes
+
+VPS fails gracefully:
+- No map coverage → Fall back to GPS
+- Low confidence → Indicate uncertainty
+- Repeated structures → Request more images
+- Changed scene → Indicate map may be stale
+
+Users should trust VPS when it's confident, and know when it's not.

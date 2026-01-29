@@ -1,0 +1,84 @@
+---
+title: "Persistent Spatial Maps: Remember Where You Were"
+date: "2017-05-22"
+excerpt: "Designing map persistence systems that let AR content stay in place across sessions - the foundation of spatial computing."
+tags: ["Mapping", "SLAM", "Persistence", "Spatial Computing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Every time you put on an AR headset, it wakes up in a new universe. Without persistent maps, the virtual furniture you placed yesterday is gone. Your carefully positioned sticky notes have vanished. AR becomes a toy instead of a tool.
+
+## The Persistence Problem
+
+Requirements:
+1. **Relocalization**: Recognize you're in a previously mapped space
+2. **Alignment**: Align current tracking to the stored map
+3. **Consistency**: Virtual content appears in exactly the same physical location
+4. **Evolution**: Handle environments that change over time
+
+## Map Representation
+
+What do we store?
+
+**Sparse map**: Keyframes with visual features and 3D landmarks.
+- Compact (MBs per room)
+- Fast to load and match
+- Limited to areas with good visual features
+
+**Dense map**: Full 3D mesh or voxel grid.
+- Complete geometry
+- Large (100s of MBs per room)
+- Better for occlusion and physics
+
+**Hybrid**: Sparse for localization, dense for rendering/interaction.
+- Best of both worlds
+- Complexity in keeping them synchronized
+
+We're pursuing hybrid - sparse map is the "skeleton" for tracking, dense mesh attached for content interaction.
+
+## Relocalization Pipeline
+
+When the headset wakes up:
+
+```
+1. Capture initial frames
+2. Extract features
+3. Query map database (visual vocabulary / learned descriptors)
+4. Candidate map retrieval
+5. Feature matching against candidates
+6. Geometric verification (PnP + RANSAC)
+7. Pose refinement
+8. Confidence check → Relocalized!
+```
+
+Target: relocalize in under 2 seconds with >95% success rate in mapped areas.
+
+## Map Updates
+
+Environments change:
+- Furniture moves
+- Lighting changes
+- Renovations
+
+Options:
+- **Immutable maps**: Never update, accept drift
+- **Full replacement**: Re-map from scratch periodically
+- **Incremental update**: Merge new observations into existing map
+
+Incremental is ideal but complex. How do you merge conflicting observations? When is a change permanent vs temporary?
+
+We're starting with immutable maps and explicit "remap" user action. Incremental updates are a future optimization.
+
+## Storage and Retrieval
+
+At scale, users will have maps of home, office, friends' houses, coffee shops. Potentially hundreds of maps.
+
+Architecture:
+- Local storage for frequently visited places
+- Cloud storage for full history
+- Smart prefetch based on location/calendar
+
+Privacy implications are significant. Maps contain detailed 3D models of private spaces. Encryption, access control, and user consent are paramount.
+
+More on the privacy architecture next month.

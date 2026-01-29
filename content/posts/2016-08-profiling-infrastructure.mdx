@@ -1,0 +1,75 @@
+---
+title: "Building Profiling Infrastructure for Embedded Perception"
+date: "2016-08-18"
+excerpt: "Creating tools and processes for systematic performance measurement on embedded hardware - the foundation of optimization."
+tags: ["Profiling", "Performance", "Infrastructure", "Embedded Systems", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+"We need to optimize the SLAM pipeline" is not actionable. "The feature matching stage consumes 340mW and takes 8.2ms on 640x480 input" is actionable. Getting from the first statement to the second requires infrastructure.
+
+## What We Need to Measure
+
+**Timing**:
+- Per-function execution time
+- End-to-end latency
+- Jitter and worst-case outliers
+
+**Power**:
+- Per-subsystem power consumption
+- Power over time (not just average)
+- Correlation with algorithmic phases
+
+**Memory**:
+- Peak allocation
+- Bandwidth utilization
+- Cache hit rates
+
+**Thermal**:
+- Junction temperatures
+- Skin temperature at key points
+- Thermal throttling events
+
+## The Profiling Stack
+
+### Hardware Layer
+- Power monitors on each rail (INA226 or similar)
+- Thermal sensors (on-chip and external)
+- High-speed DAQ for synchronized capture
+
+### Firmware Layer
+- Hardware performance counters
+- Timestamping infrastructure
+- Trace buffer with minimal overhead
+
+### Software Layer
+- Instrumentation macros (compile-time toggleable)
+- Statistical aggregation
+- Automated regression detection
+
+### Visualization
+- Timeline views showing function execution
+- Power overlay on timeline
+- Thermal heatmaps over time
+
+## Key Insights So Far
+
+The infrastructure is already paying off:
+
+1. **Memory bandwidth is the bottleneck**: CPU cycles are cheap; moving data is expensive. We're memory-bound, not compute-bound.
+
+2. **Power scales super-linearly with clock**: Running at 80% clock uses ~60% power. Often better to run slower.
+
+3. **Thermal varies by use case**: Portrait mode (device vertical) has 40% worse cooling than landscape due to convection patterns.
+
+4. **Jitter matters for VIO**: Even if average latency is good, occasional 50ms spikes cause tracking loss.
+
+## Process Changes
+
+We've instituted:
+- Power/latency regression tests on every commit
+- Mandatory profiling data in code reviews for critical paths
+- Weekly "perf review" meetings
+
+It's cultural change as much as technical. More on that journey next month.

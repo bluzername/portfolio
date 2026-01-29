@@ -1,0 +1,93 @@
+---
+title: "Integrating VPS with Quest: On-Device Constraints"
+date: "2021-01-18"
+excerpt: "The challenges of bringing visual positioning to Quest headsets - power, latency, and the cloud-device split."
+tags: ["Quest", "VPS", "Integration", "Embedded", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+VPS needs to work on Quest headsets. This means running on mobile hardware with strict constraints - familiar territory from Magic Leap days.
+
+## Quest Hardware Reality
+
+**Processor**: Snapdragon XR2 (ARM-based mobile SoC)
+**Memory**: 6GB shared between system and apps
+**Power**: Battery life is precious - every mW matters
+**Thermal**: Enclosed headset with limited cooling
+
+VPS competes with:
+- Tracking (already running VIO)
+- Rendering (60-90Hz display)
+- Applications (user's actual experience)
+- Guardian (safety boundary)
+
+We get scraps of the remaining budget.
+
+## On-Device vs Cloud Split
+
+What must run on-device:
+- Real-time tracking (can't tolerate network latency)
+- Feature extraction (privacy - no raw images sent)
+- Pose refinement (continuous updates)
+
+What can run in cloud:
+- Initial localization (once per session)
+- Map retrieval (large database)
+- Map updates (background sync)
+
+## The Latency Budget
+
+For initial localization:
+```
+Image capture:        0ms (start)
+Feature extraction:  50ms (on-device)
+Network upload:     100ms (features, not images)
+Cloud retrieval:    150ms (find relevant map)
+Cloud matching:     100ms (compute pose)
+Network download:    50ms (pose result)
+On-device verify:    50ms
+Total:             500ms
+```
+
+500ms is acceptable for initial fix. But it means users wait half a second when they start an experience.
+
+## Continuous Tracking
+
+After initial localization, track continuously using VIO:
+- VPS provides initial pose
+- VIO integrates motion
+- Periodic VPS re-queries correct drift
+
+Drift accumulates at ~0.1% of distance traveled. Re-query every 10 seconds keeps error bounded.
+
+## On-Device Optimizations
+
+Running feature extraction on Quest:
+- **INT8 quantization**: 4x speedup, minimal accuracy loss
+- **Model pruning**: Remove 50% of parameters
+- **DSP utilization**: Offload to Hexagon DSP when possible
+- **Batch processing**: Process multiple frames together (when latency allows)
+
+Current: 50ms for feature extraction. Target: 30ms.
+
+## Privacy Architecture
+
+Key principle: raw images never leave device.
+
+```
+Camera → On-Device Processing → Features → Cloud → Pose
+         (images stay here)      (abstract representation)
+```
+
+Features are designed to be non-invertible - can't reconstruct image from features.
+
+## Testing Integration
+
+Quest-specific test suite:
+- Power consumption monitoring
+- Thermal behavior under sustained use
+- Memory allocation tracking
+- End-to-end latency measurement
+
+Every code change validated on real Quest hardware.

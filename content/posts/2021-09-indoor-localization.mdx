@@ -1,0 +1,94 @@
+---
+title: "Indoor Visual Positioning: Different Beast Entirely"
+date: "2021-09-20"
+excerpt: "Why indoor localization is fundamentally harder than outdoor - GPS absence, feature similarity, and the path forward."
+tags: ["Indoor", "Localization", "VPS", "Challenges", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Outdoor VPS is hard. Indoor VPS is harder. GPS doesn't work indoors, and buildings look more alike than streets do.
+
+## Why Indoor is Harder
+
+### No GPS Fallback
+Outdoors: If VPS fails, fall back to 3m GPS.
+Indoors: If VPS fails, you have nothing.
+
+The system must work, always.
+
+### Feature Ambiguity
+Outdoor features: Buildings, street signs, unique architecture.
+Indoor features: White walls, drop ceilings, identical corridors.
+
+Office floors are nearly identical to other floors. Retail stores follow templates. Airports have repetitive gates.
+
+### Limited Viewpoint Diversity
+Outdoor capture: Many viewpoints from streets, photos from tourists.
+Indoor capture: Fewer photos, more restricted viewpoints.
+
+Less training data, harder coverage.
+
+### Lighting Variability
+Outdoor: Daylight is predictable (sun position).
+Indoor: Artificial lighting varies by venue, flickers, creates harsh shadows.
+
+### Scale Challenges
+One building: Thousands of features.
+All buildings: Billions of features, many duplicates.
+
+False matches across buildings are common.
+
+## Technical Approaches
+
+### Hierarchical Localization
+First: Which building? (Coarse - WiFi, BLE, or image global descriptor)
+Then: Which floor? (Medium - image retrieval within building)
+Finally: Where on floor? (Fine - feature matching)
+
+Each level reduces search space.
+
+### Semantic Features
+Instead of generic features, use semantic understanding:
+- "This is a Starbucks" narrows locations dramatically
+- Room types (bathroom, elevator, conference) provide context
+- Signage and text are highly distinctive
+
+Combining geometric and semantic features.
+
+### Multi-Modal Fusion
+Visual alone isn't enough. Fuse with:
+- WiFi fingerprinting (room-level accuracy)
+- BLE beacons (if present)
+- Magnetic field signatures
+- Pedestrian dead reckoning
+
+Each modality contributes. Fusion handles individual failures.
+
+## Mapping Indoor Spaces
+
+Challenges:
+- Access control (can't just walk into offices)
+- Privacy sensitivity (people, screens, documents)
+- Dynamic environments (furniture moves daily)
+- Scale (more indoor space than outdoor surface)
+
+Approaches:
+- Partner with venue operators
+- Mapping-as-a-service for businesses
+- Robotics for systematic capture
+- Crowd-sourced with strong privacy controls
+
+## Current State
+
+Indoor VPS in development:
+- Working in controlled environments (Meta offices)
+- Accuracy: 30cm in mapped areas
+- Robustness: 85% success rate
+
+Not ready for external launch. Key gaps:
+- Multi-floor confusion
+- Similar-room discrimination
+- Mapping efficiency
+
+Targeting indoor beta in 2022.

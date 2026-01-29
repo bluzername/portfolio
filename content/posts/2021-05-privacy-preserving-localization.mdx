@@ -1,0 +1,109 @@
+---
+title: "Privacy-Preserving Visual Localization"
+date: "2021-05-17"
+excerpt: "How to localize without compromising privacy - on-device processing, feature design, and differential privacy approaches."
+tags: ["Privacy", "Localization", "Security", "VPS", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+VPS knows where you are. That's its job. But it shouldn't know more than necessary, and that information shouldn't be exploitable.
+
+## Privacy Threats
+
+### Location History
+Sequential VPS queries reveal movement patterns:
+- Where you go
+- When you go there
+- How long you stay
+
+### Image Content
+Images sent for localization could reveal:
+- People you're with
+- Activities you're doing
+- Private spaces
+
+### Aggregation
+Even anonymous data, aggregated, reveals patterns:
+- Popular locations
+- Traffic flows
+- Gathering patterns
+
+## Defense: On-Device Processing
+
+First principle: images never leave the device.
+
+```
+Camera → On-Device Feature Extraction → Features → Cloud
+         (full image here)              (no image content)
+```
+
+Features are designed to be non-invertible:
+- Can match to map, but can't reconstruct original image
+- Tested with adversarial image reconstruction attacks
+- Acceptable leakage: general scene type (indoor/outdoor), not specific content
+
+## Defense: Minimal Collection
+
+Only collect what's needed:
+- Features, not images
+- Approximate location, not precise trajectory
+- Session ID, not user ID
+
+Retention policy:
+- Query features deleted immediately after localization
+- Aggregate statistics retained for service improvement
+- No personal location history stored
+
+## Defense: Differential Privacy
+
+Add calibrated noise to prevent individual identification:
+
+For location aggregates:
+```
+True count + Noise(scale=ε) = Published count
+```
+
+Guarantees: can't determine if any individual was present.
+
+For feature matching:
+```
+True match score + Noise = Reported score
+```
+
+Prevents precise timing inference while maintaining localization function.
+
+## Defense: User Control
+
+Users must have meaningful control:
+- Clear opt-in for VPS features
+- Easy opt-out without losing device function
+- Data download (see what we have)
+- Data deletion (remove all traces)
+
+## Auditing and Verification
+
+How do users trust our claims?
+- Regular third-party privacy audits
+- Open-source privacy components (where possible)
+- Bug bounty for privacy vulnerabilities
+- Transparency reports on data requests
+
+## The Performance Trade-off
+
+Privacy measures have costs:
+- On-device processing uses more battery
+- Differential privacy reduces accuracy
+- Limited collection prevents some features
+
+We accept these costs. Privacy is a feature, not a bug.
+
+## Regulatory Landscape
+
+GDPR, CCPA, and emerging regulations shape our design:
+- Data minimization (collect minimum necessary)
+- Purpose limitation (use only for stated purpose)
+- Storage limitation (delete when not needed)
+- User rights (access, correction, deletion)
+
+Building compliance in, not bolting it on.

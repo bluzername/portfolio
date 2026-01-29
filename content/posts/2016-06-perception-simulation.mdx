@@ -1,0 +1,55 @@
+---
+title: "The Case for Perception Simulation"
+date: "2016-06-15"
+excerpt: "Why we need high-fidelity sensor simulation for developing perception algorithms, and the challenges of making simulated data match reality."
+tags: ["Simulation", "Synthetic Data", "Computer Vision", "Testing", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+We have a problem: our perception algorithms need to be robust across thousands of environments, lighting conditions, and edge cases. But our hardware prototypes are limited, expensive, and slow to iterate.
+
+The solution seems obvious: simulate.
+
+## Why Simulation?
+
+**Scale**: Run millions of test scenarios overnight
+**Control**: Precisely vary lighting, geometry, motion profiles
+**Ground Truth**: Perfect pose and depth labels by construction
+**Iteration Speed**: Test algorithm changes in minutes, not days
+
+## The Reality Gap
+
+Here's the catch: algorithms trained or tested only on synthetic data often fail in the real world. This "reality gap" or "sim-to-real gap" is the central challenge of simulation-based development.
+
+Sources of the gap:
+- **Rendering fidelity**: Real materials have complex BRDFs, subsurface scattering
+- **Sensor noise**: Real sensors have shot noise, dark current, read noise
+- **Geometric accuracy**: Real environments have imperfections, clutter, moving objects
+- **Temporal dynamics**: Motion blur, rolling shutter, exposure variations
+
+## Closing the Gap
+
+Several approaches we're exploring:
+
+### Domain Randomization
+Vary simulation parameters (textures, lighting, noise) widely during training. The hope: if you've seen enough variation, reality is just another sample.
+
+### Physics-Based Rendering
+Use physically accurate ray tracing instead of game-engine rasterization. Much slower, but more realistic.
+
+### Sensor Modeling
+Don't just render RGB - simulate the actual sensor physics:
+- Photon shot noise (Poisson)
+- Read noise (Gaussian)
+- Fixed pattern noise
+- Lens distortion and chromatic aberration
+
+### Real Data Augmentation
+Mix real and synthetic data during training. Use sim for scale, real for grounding.
+
+## Building the Pipeline
+
+I'm starting to advocate for a dedicated simulation team. This isn't a side project - it's infrastructure that will determine how fast we can iterate on perception.
+
+Initial investment is high, but the alternative is debugging in the field with expensive hardware and angry engineers.

@@ -1,0 +1,83 @@
+---
+title: "Procedural Environment Generation for Training Data"
+date: "2017-11-20"
+excerpt: "How to generate millions of diverse, realistic environments procedurally - the key to scaling synthetic data."
+tags: ["Procedural Generation", "Synthetic Data", "3D Assets", "Training Data", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Hand-building 3D environments for training data doesn't scale. If we need a million diverse scenes, we need to generate them.
+
+## The Procedural Generation Philosophy
+
+Instead of modeling a specific room, model the **rules** that generate rooms:
+- Room dimensions follow distributions from real estate data
+- Furniture placement follows cultural conventions and physical constraints
+- Materials are sampled from measured BRDF libraries
+- Lighting varies by time of day and fixture types
+
+The generative process becomes the data source.
+
+## Our Generation Pipeline
+
+### Space Generation
+```
+Building Template → Room Layout → Doorways/Windows →
+Floor Plan Validation → Ceiling/Floor/Wall Materials
+```
+
+Templates: apartments, offices, retail, industrial
+Room grammar: living rooms connect to kitchens, bedrooms have closets, etc.
+Validation: check navigability, minimum dimensions, structural plausibility
+
+### Object Placement
+```
+Room Type → Required Furniture List → Placement Algorithm →
+Collision Detection → Semantic Relationships
+```
+
+Rules: beds against walls, TVs facing seating, tables in open areas
+Semantic relationships: lamp on nightstand, book on coffee table
+Collision: physics simulation for stable placement
+
+### Material Variation
+Each surface gets a material sampled from a library:
+- Measured BRDFs for realism
+- Procedural textures for infinite variation
+- Age/wear parameters (scratches, stains, patina)
+
+### Lighting
+Procedural lighting setup:
+- Window positions from architecture
+- Time of day → sun angle and intensity
+- Interior fixtures placed per room type
+- Ambient terms for indirect light approximation
+
+## Quality vs Diversity Trade-off
+
+More variation = better coverage but potentially unrealistic combinations.
+
+Controls:
+- **Constraint satisfaction**: Rules prevent nonsensical scenes (toilet in kitchen)
+- **Distribution matching**: Sample dimensions/placements from real distributions
+- **Rarity weighting**: Include edge cases but don't over-represent them
+
+## Validation
+
+How do we know generated scenes are realistic?
+
+1. **Human evaluation**: Show scenes to annotators, rate realism (expensive, slow)
+2. **Distribution matching**: Compare statistics (object co-occurrence, room sizes) to real datasets
+3. **Domain classifier**: Train model to distinguish real vs synthetic - low accuracy = good
+
+Current generation capability: ~1000 unique environments per day. Need 10x improvement.
+
+## Integration with Rendering
+
+Generated scenes are stored in USD format for rendering:
+- Complete material and lighting specification
+- Multiple sensor viewpoints per scene
+- Variation parameters stored for reproducibility
+
+The pipeline from generation to rendered training data is fully automated. This is the leverage.

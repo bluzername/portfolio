@@ -1,0 +1,83 @@
+---
+title: "Visual-Inertial Odometry: Fusing Cameras and IMU"
+date: "2017-04-18"
+excerpt: "Deep dive into VIO algorithms - how we combine visual features with inertial measurements for robust 6DoF tracking."
+tags: ["VIO", "SLAM", "IMU", "Sensor Fusion", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Pure visual odometry fails in exactly the conditions where users need AR most: fast head motion, poor lighting, textureless environments. IMU fusion is the solution.
+
+## Why IMU Helps
+
+**High frequency**: IMU runs at 500-1000Hz vs camera at 30-60Hz. Fills the gaps.
+
+**Motion model**: IMU provides acceleration and angular velocity - strong prior on motion.
+
+**Scale observability**: Monocular visual SLAM has scale ambiguity. Accelerometer gives absolute scale.
+
+**Robustness**: IMU works in darkness, motion blur, featureless scenes.
+
+## The State Vector
+
+VIO estimates a state vector including:
+
+```
+x = [p, v, q, ba, bg]
+
+p  - position (3)
+v  - velocity (3)
+q  - orientation quaternion (4)
+ba - accelerometer bias (3)
+bg - gyroscope bias (3)
+```
+
+Total: 16 parameters, but orientation has 1 constraint (unit quaternion), so 15 degrees of freedom.
+
+## IMU Preintegration
+
+Naive approach: integrate IMU between camera frames, use as motion constraint.
+
+Problem: IMU integration depends on current bias estimate. When bias estimate changes (after optimization), must re-integrate.
+
+Solution: **Preintegration** - integrate IMU measurements into a "delta" that's independent of initial state:
+
+```
+Δp = ∫∫ R(t)(a(t) - ba)dt²
+Δv = ∫ R(t)(a(t) - ba)dt
+Δq = ∫ ω(t) - bg dt
+```
+
+These preintegrated deltas can be used as constraints in optimization, with Jacobians for updating when bias changes.
+
+## Tightly-Coupled vs Loosely-Coupled
+
+**Loosely-coupled**: Visual odometry runs independently, fused with IMU in separate filter.
+- Simpler implementation
+- Suboptimal (information lost in VO abstraction)
+
+**Tightly-coupled**: Raw visual measurements and IMU jointly optimized.
+- Better accuracy
+- More complex, higher compute
+
+We're implementing tightly-coupled - the accuracy gain is worth the complexity for AR.
+
+## Initialization
+
+VIO needs good initial estimates to converge:
+1. **Static initialization**: Device stationary, estimate gravity direction and gyro bias
+2. **Dynamic initialization**: Joint estimation of motion, gravity, scale, biases from short motion sequence
+
+Static is easier but requires user cooperation. We need robust dynamic initialization for instant-on experience.
+
+## Failure Modes
+
+VIO fails when:
+- IMU saturation (acceleration > 16g, rotation > 2000°/s)
+- Extended visual deprivation (>1s without features)
+- Rapid bias change (temperature transient)
+
+Detecting and recovering from failures is as important as steady-state accuracy.
+
+Next month: the mapping side of SLAM.

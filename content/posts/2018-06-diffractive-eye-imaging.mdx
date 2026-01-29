@@ -1,0 +1,98 @@
+---
+title: "Diffractive Optics for Eye Imaging"
+date: "2018-06-18"
+excerpt: "Using diffractive optical elements to enable eye tracking in waveguide-based AR displays - turning a constraint into an opportunity."
+tags: ["Diffractive Optics", "Eye Tracking", "Waveguides", "AR Displays", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Waveguide displays use diffractive optical elements (DOEs) to guide light to the eye. Can we use similar structures for eye tracking? This dual-use approach could simplify the overall system.
+
+## The Waveguide Display Primer
+
+AR displays need to project images while the user sees through to the real world. Waveguide approach:
+
+1. Light enters waveguide at input coupler (DOE)
+2. Light propagates via total internal reflection
+3. Light exits at output coupler (DOE) toward eye
+4. User sees virtual image overlaid on real world
+
+## The Eye Tracking Challenge
+
+Standard eye tracking adds cameras alongside the display. Problems:
+- Additional hardware cost and complexity
+- Optical paths must not interfere
+- Form factor impact
+
+## The Diffractive Solution
+
+What if the same waveguide used for display could also image the eye?
+
+Concept:
+- IR illumination through the waveguide (different layer or wavelength)
+- Eye reflection couples back into waveguide
+- Exits waveguide at sensor location
+
+```
+         ┌─────────────────────────┐
+    Eye →│ Waveguide with DOEs     │← Display light in
+         │                         │
+         └────────────┬────────────┘
+                      │
+                      ▼
+               Eye camera
+         (captures light from eye via waveguide)
+```
+
+## DOE Design Considerations
+
+### Wavelength Separation
+Display uses visible light (450-640nm). Eye tracking uses NIR (850nm).
+
+DOE response is wavelength-dependent. Design DOEs that:
+- Efficiently couple display wavelengths for image delivery
+- Efficiently couple NIR for eye imaging
+- Minimize crosstalk between paths
+
+### Angular Bandwidth
+Eye imaging needs to capture across the eye box (~20mm).
+
+DOE must have sufficient angular bandwidth to collect light from different eye positions.
+
+### Efficiency Trade-offs
+Every DOE has efficiency losses. Dual-use means:
+- Some display light leaks into eye-track path (background noise)
+- Some eye-track light leaks into display (ghost images)
+
+Managing these trade-offs is the design challenge.
+
+## Prototype Results
+
+Built a bench prototype with:
+- Commercial waveguide (single layer)
+- Custom NIR DOE overlay
+- CMOS sensor at edge
+
+Results:
+- Pupil clearly visible
+- Glints from co-propagated IR LEDs detectable
+- Image quality sufficient for basic gaze estimation
+
+Challenges:
+- Efficiency lower than dedicated camera path
+- Crosstalk creates background haze
+- Manufacturing the custom DOE is expensive
+
+## Path to Product
+
+For V1: separate eye tracking cameras (proven, lower risk).
+
+For V2+: integrated diffractive eye imaging could:
+- Reduce component count
+- Enable thinner form factor
+- Share manufacturing steps with display waveguide
+
+We're continuing R&D and building patent portfolio.
+
+*[Patent granted 2021: US11237631 "Eye-Imaging Apparatus Using Diffractive Optical Elements"]*

@@ -1,0 +1,97 @@
+---
+title: "VPS for Smart Glasses: Ray-Ban Stories Considerations"
+date: "2021-08-16"
+excerpt: "Adapting visual positioning for smart glasses form factor - different sensors, different constraints, different use cases."
+tags: ["Smart Glasses", "Ray-Ban", "VPS", "Wearables", "Meta"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+Meta is launching smart glasses with Ray-Ban. While VPS isn't in V1, we're planning for future integration. Very different constraints from Quest.
+
+## Ray-Ban vs Quest
+
+| Aspect | Quest | Smart Glasses |
+|--------|-------|---------------|
+| Form factor | Headset (500g) | Glasses (50g) |
+| Compute | Snapdragon XR2 | Low-power SoC |
+| Camera | Wide-angle stereo | Small forward-facing |
+| Battery | 3-4 hours active | All-day target |
+| Use case | Immersive XR | Ambient assist |
+
+The power and compute constraints are dramatically tighter.
+
+## Smart Glasses VPS Requirements
+
+**Power budget**: Under 10mW average (vs. 150mW on Quest)
+- Can't run continuous feature extraction
+- Must be event-triggered, not continuous
+
+**Camera quality**: Consumer-grade, fixed focus
+- Lower resolution
+- More noise
+- Less controlled viewpoint
+
+**Use cases**: Different from Quest
+- Navigation assistance
+- POI information
+- Contextual reminders
+- Social sharing location
+
+Doesn't need VIO-level continuous tracking. Occasional localization is sufficient.
+
+## Sparse Localization Architecture
+
+Instead of continuous VPS, trigger on events:
+- User requests location context
+- Significant location change detected (GPS)
+- App requires precise location
+- Periodic background check
+
+Query pattern: Once per minute, not 60 times per second.
+
+This dramatically changes the architecture:
+- Latency less critical (1-2 seconds acceptable)
+- Power per query can be higher
+- Cloud processing more acceptable
+- On-device simplicity valued
+
+## Sensor Adaptation
+
+Smart glasses camera is different:
+- Forward-facing only (no stereo, no rear cameras)
+- Smaller sensor (more noise)
+- Fixed focus (outdoor optimized)
+- Lower frame rate
+
+Need features robust to:
+- Single-view geometry
+- Motion blur (head movement during capture)
+- Variable focus quality
+
+Training specifically for this sensor profile.
+
+## Privacy Sensitivity
+
+Glasses are more privacy-sensitive than headsets:
+- Worn in public constantly
+- Less obvious when capturing
+- Bystander awareness concerns
+
+Extra precautions:
+- Explicit visual indicator during capture
+- Stricter limits on capture frequency
+- Enhanced face blurring in processing
+
+## Timeline
+
+Ray-Ban Stories V1: No VPS (ships late 2021)
+Future generation: VPS integration target
+
+Using V1 period to:
+- Understand real sensor characteristics
+- Collect (consented) data for training
+- Refine ultra-low-power algorithms
+- Build glasses-specific map layers
+
+Preparing for a future where glasses have spatial awareness.

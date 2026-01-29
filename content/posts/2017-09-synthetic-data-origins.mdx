@@ -1,0 +1,73 @@
+---
+title: "Founding the Synthetic Data Team"
+date: "2017-09-18"
+excerpt: "Why I pushed to create a dedicated synthetic data team, and the case for simulation-first perception development."
+tags: ["Synthetic Data", "Simulation", "Team Building", "Computer Vision", "Magic Leap"]
+author: "Evyatar Bluzer"
+published: true
+---
+
+After a year of building perception systems, one pattern keeps emerging: we're bottlenecked on data. Today I made the case for a dedicated synthetic data team. It got approved.
+
+## The Data Problem
+
+Machine learning for perception needs:
+- **Scale**: Millions of labeled examples
+- **Diversity**: Every lighting condition, environment, user variation
+- **Accuracy**: Pixel-perfect labels for segmentation, millimeter-perfect depth
+- **Edge cases**: The rare scenarios where systems fail
+
+Real data collection fails on all counts:
+- Expensive and slow to collect
+- Limited diversity (can only capture what exists)
+- Labels are noisy (human annotation has errors)
+- Edge cases are by definition rare
+
+## The Synthetic Data Promise
+
+In simulation:
+- Generate unlimited data programmatically
+- Perfect ground truth by construction
+- Full control over conditions
+- Easy to synthesize rare events
+
+The catch: synthetic data must be "real enough" to transfer to actual sensors.
+
+## Team Charter
+
+The synthetic data team will:
+
+1. **Build rendering infrastructure** for sensor-accurate simulation
+2. **Create asset pipelines** for scalable environment generation
+3. **Develop domain adaptation** techniques to close the reality gap
+4. **Establish validation protocols** to ensure transfer
+
+## Initial Focus Areas
+
+**Eye tracking**: Eye images in simulation - eyelid positions, pupil sizes, gaze directions. Relatively contained domain.
+
+**Depth sensors**: Simulating ToF and structured light including sensor noise models.
+
+**RGB features**: The hardest - photorealistic rendering at scale.
+
+## Hiring Profile
+
+Different from typical CV engineers:
+- **Graphics expertise**: Real-time rendering, PBR, ray tracing
+- **Procedural generation**: Creating variation programmatically
+- **Domain knowledge**: Understanding what perception algorithms need
+- **Tooling mindset**: Building systems others can use
+
+Found our first hire - a graphics engineer from gaming who's excited about the applied ML angle.
+
+## Success Metrics
+
+How do we know synthetic data is working?
+
+1. **Gap measurement**: Performance on real test set after training on synthetic vs real data
+2. **Marginal value**: Does adding more synthetic data keep improving performance?
+3. **Coverage**: Are we reaching scenarios impossible to capture in real data?
+
+Goal: synthetic data enables better models than pure real-data training by end of next year.
+
+This is a bet. But the alternative - scaling real data collection indefinitely - is not sustainable.
